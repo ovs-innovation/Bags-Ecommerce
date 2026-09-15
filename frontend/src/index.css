@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #FAF8F5;
+    color: #1A1715;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+}
+
+@layer components {
+  /* ─── Buttons ─── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold tracking-wide text-white bg-[#1A1715] hover:bg-[#3D2B1F] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold tracking-wide text-[#1A1715] bg-transparent border border-[#1A1715] hover:bg-[#1A1715] hover:text-white active:scale-[0.98] transition-all duration-200;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-brand-800 hover:text-brand-950 hover:bg-brand-100/60 transition-colors;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold tracking-wide text-white bg-gold-600 hover:bg-gold-700 active:scale-[0.98] transition-all duration-200;
+  }
+
+  /* ─── Cards ─── */
+  .product-card {
+    @apply relative bg-white overflow-hidden cursor-pointer;
+  }
+  .product-card-img {
+    @apply w-full aspect-[3/4] object-cover transition-transform duration-700;
+  }
+  .product-card-overlay {
+    @apply absolute inset-0 bg-black/0 transition-all duration-300 flex items-end justify-center pb-6 opacity-0;
+  }
+
+  /* ─── Section Utilities ─── */
+  .section-label {
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-700;
+  }
+  .section-heading {
+    @apply font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A1715] leading-tight;
+  }
+
+  /* ─── Form Inputs ─── */
+  .form-input {
+    @apply w-full px-4 py-3 bg-[#FAF8F5] border border-brand-200 text-[#1A1715] text-sm placeholder-stone-400 focus:outline-none focus:border-brand-700 transition-colors;
+  }
+  .form-label {
+    @apply block text-xs font-semibold uppercase tracking-widest text-stone-700 mb-1.5;
+  }
+
+  /* ─── Badge ─── */
+  .badge-sale {
+    @apply inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-cognac-600 text-white;
+  }
+  .badge-new {
+    @apply inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-[#1A1715] text-white;
+  }
+  .badge-bestseller {
+    @apply inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-gold-600 text-white;
+  }
+}
+
+/* ─── Custom Animations ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-float { animation: float 4s ease-in-out infinite; }
+.skeleton {
+  background: linear-gradient(90deg, #f0ece6 25%, #ede8e2 50%, #f0ece6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #FAF8F5; }
+::-webkit-scrollbar-thumb { background: #C4B09A; border-radius: 99px; }
