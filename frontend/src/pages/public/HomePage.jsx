@@ -35,7 +35,7 @@ export const HomePage = () => {
             className="hidden md:block absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(to right, #FAF7F2 0%, #FAF7F2 22%, rgba(250, 247, 242, 0.88) 28%, rgba(250, 247, 242, 0.45) 35%, rgba(250, 247, 242, 0) 44%)',
+                'linear-gradient(to right, #FAF7F2 0%, #FAF7F2 26%, rgba(250, 247, 242, 0.92) 33%, rgba(250, 247, 242, 0.55) 42%, rgba(250, 247, 242, 0) 52%)',
             }}
           />
 
@@ -55,31 +55,42 @@ export const HomePage = () => {
         </div>
 
         {/* Hero Content overlaid on the left */}
-        <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-10 sm:py-12 lg:py-14 min-h-[420px] sm:min-h-[460px] lg:min-h-[490px] xl:min-h-[510px] flex items-center">
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-10 sm:py-12 lg:py-14 min-h-[450px] sm:min-h-[460px] lg:min-h-[500px] xl:min-h-[510px] flex items-center">
           <div className="max-w-[580px]">
-            <h1 className="font-serif text-3xl sm:text-[38px] lg:text-[44px] xl:text-[48px] font-medium text-[#1A1612] leading-[1.18] tracking-[-0.01em] mb-4 sm:mb-5">
-              <span className="block">Heirloom Leather,</span>
-              <span className="block">Enduring Silhouettes,</span>
-              <span className="block">Crafted for Generations.</span>
+            <h1 className="font-serif text-3xl sm:text-[38px] lg:text-[44px] xl:text-[48px] font-medium leading-[1.18] tracking-[-0.01em] mb-4 sm:mb-5">
+              <span className="block text-[#9B6A38]">Heirloom Leather,</span>
+              <span className="block text-[#1A1612]">Enduring Silhouettes,</span>
+              <span className="block text-[#1A1612]">Crafted for Generations.</span>
             </h1>
 
             <p className="text-[14px] sm:text-[15.5px] text-[#4A423A] leading-[1.6] mb-6 sm:mb-7 max-w-[440px] font-normal">
               Benchmade in India by master artisans, using only full-grain, vegetable-tanned leather.
             </p>
 
-            {/* Action Buttons matching reference */}
+            {/* Action Buttons with luxury interactive animations */}
             <div className="flex flex-wrap items-center gap-3.5">
+              {/* Primary Button: Explore Women */}
               <Link
                 to="/category/women"
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#1A1612] text-white text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.16em] uppercase hover:bg-[#2C241E] active:scale-[0.98] transition-all duration-200"
+                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 bg-[#1A1612] text-white text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.18em] uppercase rounded-xs hover:bg-[#2A221B] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-[0.98] transition-all duration-300"
               >
-                EXPLORE WOMEN —
+                {/* Shimmer sweep effect */}
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
+                <span className="relative z-10">EXPLORE WOMEN</span>
+                <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5 text-[#E6C687]" />
               </Link>
+
+              {/* Secondary Button: Explore Men */}
               <Link
                 to="/category/men"
-                className="inline-flex items-center justify-center px-6 py-3 bg-transparent border border-[#BFB3A4] text-[#1A1612] text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.16em] uppercase hover:border-[#1A1612] hover:bg-black/[0.03] active:scale-[0.98] transition-all duration-200"
+                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 bg-transparent border border-[#AFA190] text-[#1A1612] text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.18em] uppercase rounded-xs hover:border-[#1A1612] hover:bg-[#1A1612] hover:text-white hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] transition-all duration-300"
               >
-                EXPLORE MEN —
+                {/* Shimmer sweep effect */}
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+
+                <span className="relative z-10">EXPLORE MEN</span>
+                <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5 group-hover:text-[#E6C687]" />
               </Link>
             </div>
           </div>
@@ -207,7 +218,7 @@ export const HomePage = () => {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
           <div className="relative overflow-hidden bg-[#F6F3EE] border border-[#E8E1D7] rounded-sm shadow-subtle group">
             <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[380px] lg:min-h-[440px]">
-              
+
               {/* Left Column: Editorial Copy & Discover CTA matching reference */}
               <div className="lg:col-span-5 p-8 sm:p-12 lg:p-16 z-10 flex flex-col justify-center">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#7F5E38] mb-3">
@@ -238,7 +249,7 @@ export const HomePage = () => {
                   alt="The Bag Collective — Handcrafted Luxury Bags"
                   className="w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
                 />
-                
+
                 {/* Soft subtle left gradient edge on desktop to blend seamlessly with left copy container */}
                 <div
                   className="hidden lg:block absolute inset-y-0 left-0 w-28 pointer-events-none"

@@ -40,7 +40,7 @@ export const Navbar = () => {
   };
 
   const linkClass = ({ isActive }) =>
-    `text-[13px] tracking-wide transition-colors duration-200 py-1 ${
+    `text-[13px] tracking-wide transition-colors duration-200 py-1 focus:outline-none ${
       isActive
         ? 'text-[#1A1612] font-semibold'
         : 'text-[#4A4238] hover:text-[#1A1612]'
@@ -76,7 +76,12 @@ export const Navbar = () => {
 
               <nav className="hidden lg:flex items-center space-x-8 text-[13px]">
                 {BRAND_CONFIG.navLinks.map((link) => (
-                  <NavLink key={link.path} to={link.path} className={linkClass}>
+                  <NavLink
+                    key={link.path}
+                    to={link.path}
+                    end={link.path === '/'}
+                    className={linkClass}
+                  >
                     {link.label}
                   </NavLink>
                 ))}
