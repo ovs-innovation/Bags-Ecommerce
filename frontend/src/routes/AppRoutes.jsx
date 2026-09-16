@@ -33,8 +33,11 @@ export const AppRoutes = () => (
       <Route path="/contact"             element={<ContactPage />} />
 
       {/* Convenience aliases */}
-      <Route path="/men"   element={<Navigate to="/category/men"   replace />} />
-      <Route path="/women" element={<Navigate to="/category/women" replace />} />
+      <Route path="/men"            element={<Navigate to="/category/men"   replace />} />
+      <Route path="/women"          element={<Navigate to="/category/women" replace />} />
+      <Route path="/faq"            element={<Navigate to="/contact"        replace />} />
+      <Route path="/shipping"       element={<Navigate to="/contact"        replace />} />
+      <Route path="/account/orders" element={<Navigate to="/login"          replace />} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Route>

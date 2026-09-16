@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { ShoppingBag, User, Search, Menu, X, ArrowRight } from 'lucide-react';
 import { BRAND_CONFIG } from '../../constants/config';
 import { useCart } from '../../context/CartContext';
 
 export const Navbar = () => {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,8 +104,8 @@ export const Navbar = () => {
                 placeholder="Search leather bags, wallets, purses..."
                 className="flex-1 bg-transparent text-sm text-[#1A1715] placeholder-stone-400 focus:outline-none"
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    window.location.href = `/products?search=${searchQuery}`;
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
                     setSearchOpen(false);
                   }
                   if (e.key === 'Escape') setSearchOpen(false);

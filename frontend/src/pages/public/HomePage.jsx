@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowRight, Star, Truck, RotateCcw, ShieldCheck, Award,
-  ChevronLeft, ChevronRight, Quote,
+  ArrowRight, Truck, RotateCcw, ShieldCheck, Award, Quote,
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../../constants/config';
 import {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '../../data/mockData';
@@ -22,19 +22,25 @@ const GENDERS = [
 
 export const ProductsPage = () => {
   const [searchParams] = useSearchParams();
-  const [search, setSearch]     = useState(searchParams.get('search') || '');
-  const [gender, setGender]     = useState('all');
-  const [category, setCategory] = useState('all');
-  const [sort, setSort]         = useState('featured');
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const [priceMax, setPriceMax]  = useState(20000);
+  const urlQuery = searchParams.get('search') || '';
+  const urlFilter = searchParams.get('filter');
 
-  // Quick-filter from URL
-  useEffect(() => {
-    const f = searchParams.get('filter');
-    if (f === 'new') { setSort('newest'); }
-    if (f === 'bestseller') { setSort('featured'); }
-  }, [searchParams]);
+  const [search, setSearch] = useState(urlQuery);
+  const [gender, setGender] = useState('all');
+  const [category, setCategory] = useState('all');
+  const [sort, setSort] = useState(() => {
+    if (urlFilter === 'new') return 'newest';
+    if (urlFilter === 'bestseller') return 'featured';
+    return 'featured';
+  });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [priceMax, setPriceMax] = useState(20000);
+
+  const [prevQuery, setPrevQuery] = useState(urlQuery);
+  if (urlQuery !== prevQuery) {
+    setPrevQuery(urlQuery);
+    setSearch(urlQuery);
+  }
 
   const filtered = useMemo(() => {
     let list = [...PRODUCTS];

@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Leaf, Award, Users, Clock, MapPin, Mail, Phone, ArrowRight,
-} from 'lucide-react';
-import { BRAND_CONFIG } from '../../constants/config';
+import { Leaf, Award, Users, ArrowRight } from 'lucide-react';
 
 const TIMELINE = [
   { year: '2018', title: 'The Workshop Opens', desc: 'Three master leather artisans start a small workshop in Old Delhi, combining techniques passed down through four generations.' },

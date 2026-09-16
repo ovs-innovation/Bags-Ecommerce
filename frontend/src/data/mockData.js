@@ -14,10 +14,6 @@ export const CATEGORIES = [
   { id: 'cardholder', label: 'Card Holders', slug: 'card-holders' },
 ];
 
-// Unsplash image IDs known to show leather bags / fashion
-const IMG = (id, w = 600, h = 750) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
-
 export const PRODUCTS = [
   // ─── WOMEN ──────────────────────────────────────────────
   {
@@ -64,7 +60,7 @@ export const PRODUCTS = [
     discount: 24,
     sku: 'KSH-W-002',
     images: [
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
+      '/products/luna-crossbody.jpg',
       'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
     ],
     stock: 8,
@@ -125,7 +121,7 @@ export const PRODUCTS = [
     sku: 'KSH-W-004',
     images: [
       'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
     ],
     stock: 6,
     color: 'Chestnut',
@@ -184,7 +180,7 @@ export const PRODUCTS = [
     discount: 23,
     sku: 'KSH-W-006',
     images: [
-      'https://images.unsplash.com/photo-1627123424574-724758594785?auto=format&fit=crop&w=600&q=80',
+      '/products/zara-wallet.jpg',
       'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
     ],
     stock: 35,
@@ -209,15 +205,15 @@ export const PRODUCTS = [
     shortDescription: 'Full-grain harness leather, double buckle straps',
     description:
       'The Atlas Briefcase commands the boardroom. Cut from heavyweight full-grain harness leather that was originally developed for equestrian saddles, it develops a distinguished character with every commute.',
-    category: 'messenger',
+    category: 'briefcase',
     gender: 'men',
     price: 12999,
     compareAtPrice: 16999,
     discount: 24,
     sku: 'KSH-M-001',
     images: [
-      'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
+      '/products/atlas-briefcase.jpg',
+      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
     ],
     stock: 9,
     color: 'Dark Mahogany',
@@ -246,8 +242,8 @@ export const PRODUCTS = [
     discount: 20,
     sku: 'KSH-M-002',
     images: [
-      'https://images.unsplash.com/photo-1627123424574-724758594785?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
+      '/products/orion-wallet.jpg',
+      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
     ],
     stock: 42,
     color: 'Havana Brown',
@@ -276,8 +272,8 @@ export const PRODUCTS = [
     discount: 22,
     sku: 'KSH-M-003',
     images: [
-      'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80',
+      '/products/titan-messenger.jpg',
+      '/products/atlas-briefcase.jpg',
     ],
     stock: 14,
     color: 'Slate + Cognac',
@@ -306,8 +302,8 @@ export const PRODUCTS = [
     discount: 20,
     sku: 'KSH-M-004',
     images: [
-      'https://images.unsplash.com/photo-1627123424574-724758594785?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
+      '/products/drake-cardholder.jpg',
+      '/products/orion-wallet.jpg',
     ],
     stock: 60,
     color: 'Onyx Black',
@@ -336,8 +332,8 @@ export const PRODUCTS = [
     discount: 21,
     sku: 'KSH-M-005',
     images: [
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80',
+      '/products/rex-sling.jpg',
+      '/products/titan-messenger.jpg',
     ],
     stock: 18,
     color: 'Tobacco Brown',
@@ -366,8 +362,8 @@ export const PRODUCTS = [
     discount: 24,
     sku: 'KSH-M-006',
     images: [
-      'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80',
-      'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80',
+      '/products/hugo-tote.jpg',
+      '/products/atlas-briefcase.jpg',
     ],
     stock: 7,
     color: 'Raw Sienna',
