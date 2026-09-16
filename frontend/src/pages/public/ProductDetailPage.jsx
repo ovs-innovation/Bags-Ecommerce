@@ -7,6 +7,7 @@ import {
 import { getProductBySlug, getRelatedProducts } from '../../data/mockData';
 import { BRAND_CONFIG } from '../../constants/config';
 import { useCart } from '../../context/CartContext';
+import { useSavedItems } from '../../context/SavedItemsContext';
 import StarRating from '../../components/common/StarRating';
 import ProductCard from '../../components/product/ProductCard';
 
@@ -14,13 +15,14 @@ export const ProductDetailPage = () => {
   const { slug } = useParams();
   const navigate  = useNavigate();
   const { addToCart } = useCart();
+  const { isSaved, toggleSave } = useSavedItems();
   const product = getProductBySlug(slug);
 
   const [imgIdx, setImgIdx] = useState(0);
   const [qty, setQty]       = useState(1);
-  const [wish, setWish]     = useState(false);
   const [added, setAdded]   = useState(false);
   const [tab, setTab]       = useState('description');
+  const saved = isSaved(product?.id);
 
   if (!product) {
     return (
@@ -155,17 +157,18 @@ export const ProductDetailPage = () => {
               )}
             </div>
 
-            {/* Details chips */}
+            {/* Details chips: Color, Price, Materials, Size, Category */}
             <div className="flex flex-wrap gap-2">
               {[
-                { label: 'Colour', val: product.color },
-                { label: 'Material', val: product.material.split(' ').slice(0, 3).join(' ') },
-                { label: 'Weight', val: product.weight },
-                { label: 'Dimensions', val: product.dimensions },
+                { label: 'Category', val: product.category.replace('-', ' ') },
+                { label: 'Color', val: product.color },
+                { label: 'Price', val: `₹${product.price.toLocaleString('en-IN')}` },
+                { label: 'Materials', val: product.material.split(' ').slice(0, 3).join(' ') },
+                { label: 'Size', val: product.dimensions },
               ].map((d) => (
-                <div key={d.label} className="px-3 py-1.5 bg-brand-50 border border-brand-200 text-xs">
+                <div key={d.label} className="px-3 py-1.5 bg-[#FAF7F2] border border-[#EDE6DC] text-xs">
                   <span className="text-stone-500 font-medium">{d.label}: </span>
-                  <span className="text-[#1A1715] font-semibold">{d.val}</span>
+                  <span className="text-[#1A1715] font-semibold capitalize">{d.val}</span>
                 </div>
               ))}
             </div>
@@ -214,10 +217,12 @@ export const ProductDetailPage = () => {
                   Buy Now
                 </button>
                 <button
-                  onClick={() => setWish(!wish)}
-                  className="w-14 border border-brand-200 bg-white flex items-center justify-center hover:bg-brand-50 transition-colors"
+                  onClick={() => toggleSave(product)}
+                  className="w-14 border border-brand-200 bg-white flex items-center justify-center hover:bg-brand-50 active:scale-95 transition-all"
+                  aria-label={saved ? 'Remove from saved items' : 'Save item to atelier vault'}
+                  title={saved ? 'Saved in Atelier Vault' : 'Save to Atelier Vault'}
                 >
-                  <Heart className={`w-5 h-5 ${wish ? 'text-red-500 fill-red-500' : 'text-stone-500'}`} />
+                  <Heart className={`w-5 h-5 transition-colors ${saved ? 'text-red-500 fill-red-500' : 'text-stone-500 hover:text-red-500'}`} />
                 </button>
               </div>
             </div>
@@ -243,7 +248,7 @@ export const ProductDetailPage = () => {
           </div>
         </div>
 
-        {/* ── Tabs: Description / Features ── */}
+        {/* ── Tabs: Description / Features / Care ── */}
         <div className="mt-16">
           <div className="flex border-b border-brand-200">
             {['description', 'features', 'care'].map((t) => (
@@ -258,19 +263,33 @@ export const ProductDetailPage = () => {
               </button>
             ))}
           </div>
-          <div className="py-8 max-w-2xl">
+          <div className="py-8 max-w-xl">
             {tab === 'description' && (
               <p className="text-sm text-stone-700 leading-relaxed">{product.description}</p>
             )}
             {tab === 'features' && (
-              <ul className="space-y-3">
-                {product.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-stone-700">
-                    <Check className="w-4 h-4 text-brand-700 mt-0.5 flex-shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+              <div className="bg-white border border-[#EDE6DC] rounded-sm divide-y divide-[#EDE6DC] shadow-subtle overflow-hidden">
+                <div className="flex items-center justify-between py-3.5 px-5 text-xs">
+                  <span className="font-semibold text-stone-500 uppercase tracking-wider text-[11px]">Color</span>
+                  <span className="font-semibold text-[#1A1612]">{product.color}</span>
+                </div>
+                <div className="flex items-center justify-between py-3.5 px-5 text-xs">
+                  <span className="font-semibold text-stone-500 uppercase tracking-wider text-[11px]">Price</span>
+                  <span className="font-semibold text-[#1A1612]">₹{product.price.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex items-center justify-between py-3.5 px-5 text-xs">
+                  <span className="font-semibold text-stone-500 uppercase tracking-wider text-[11px]">Materials</span>
+                  <span className="font-semibold text-[#1A1612]">{product.material}</span>
+                </div>
+                <div className="flex items-center justify-between py-3.5 px-5 text-xs">
+                  <span className="font-semibold text-stone-500 uppercase tracking-wider text-[11px]">Size</span>
+                  <span className="font-semibold text-[#1A1612]">{product.dimensions}</span>
+                </div>
+                <div className="flex items-center justify-between py-3.5 px-5 text-xs">
+                  <span className="font-semibold text-stone-500 uppercase tracking-wider text-[11px]">Category</span>
+                  <span className="font-semibold text-[#1A1612] capitalize">{product.category.replace('-', ' ')}</span>
+                </div>
+              </div>
             )}
             {tab === 'care' && (
               <div className="space-y-3 text-sm text-stone-700">
