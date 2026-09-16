@@ -5,7 +5,6 @@ import {
   RotateCcw, Filter, Grid2X2, Grid3X3
 } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '../../data/mockData';
-import { BRAND_CONFIG } from '../../constants/config';
 import ProductCard from '../../components/product/ProductCard';
 
 const SORT_OPTIONS = [
@@ -14,12 +13,6 @@ const SORT_OPTIONS = [
   { value: 'price-asc',  label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
   { value: 'rating',     label: 'Top Rated' },
-];
-
-const GENDERS = [
-  { value: 'all',   label: 'All' },
-  { value: 'women', label: 'Women' },
-  { value: 'men',   label: 'Men' },
 ];
 
 const COLOR_OPTIONS = [
@@ -200,8 +193,8 @@ export const ProductsPage = () => {
     return count;
   }, [search, gender, category, color, material, size, priceMax]);
 
-  // Filter sidebar component with clean, simple language: Category, Price, Color, Materials, Size
-  const FilterContent = () => (
+  // Filter sidebar content with clean, simple language: Category, Price, Color, Materials, Size
+  const renderFilterContent = () => (
     <div className="space-y-6 text-xs text-[#1A1612]">
 
       {/* ── Category ── */}
@@ -447,7 +440,7 @@ export const ProductsPage = () => {
                 )}
               </div>
 
-              <FilterContent />
+              {renderFilterContent()}
             </div>
           </aside>
 
@@ -709,7 +702,7 @@ export const ProductsPage = () => {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-5">
-              <FilterContent />
+              {renderFilterContent()}
             </div>
             <div className="p-3 border-t border-[#EDE6DC] bg-[#FAF7F2] flex items-center gap-2">
               <button

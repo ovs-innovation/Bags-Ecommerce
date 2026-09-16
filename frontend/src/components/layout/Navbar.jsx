@@ -236,29 +236,6 @@ export const Navbar = () => {
 
         {/* Search bar slide-out */}
         {searchOpen && (
-<<<<<<< HEAD
-          <div className="border-t border-brand-200/60 px-4 py-3 bg-cream/98">
-            <div className="max-w-2xl mx-auto flex items-center gap-3">
-              <Search className="w-4 h-4 text-stone-400 flex-shrink-0" />
-              <input
-                autoFocus
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search leather bags, wallets, purses..."
-                className="flex-1 bg-transparent text-sm text-[#1A1715] placeholder-stone-400 focus:outline-none"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && searchQuery.trim()) {
-                    navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-                    setSearchOpen(false);
-                  }
-                  if (e.key === 'Escape') setSearchOpen(false);
-                }}
-              />
-              <button onClick={() => setSearchOpen(false)}>
-                <X className="w-4 h-4 text-stone-400" />
-              </button>
-=======
           <div className="border-t border-[#EDE6DC] bg-[#FAF7F2] py-4 px-6 sm:px-10 shadow-md">
             <div className="max-w-3xl mx-auto">
               <div className="relative flex items-center bg-white border border-[#EDE6DC] focus-within:border-[#1A1612] focus-within:ring-1 focus-within:ring-[#1A1612] rounded-sm shadow-subtle transition-all">
@@ -274,7 +251,7 @@ export const Navbar = () => {
                   className="flex-1 py-3 pr-24 text-xs sm:text-sm text-[#1A1612] placeholder-stone-400 bg-transparent focus:outline-none"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && searchQuery.trim()) {
-                      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
+                      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
                       setSearchOpen(false);
                     }
                     if (e.key === 'Escape') setSearchOpen(false);
@@ -284,7 +261,7 @@ export const Navbar = () => {
                   <button
                     onClick={() => {
                       if (searchQuery.trim()) {
-                        window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
+                        navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
                         setSearchOpen(false);
                       }
                     }}
@@ -311,7 +288,7 @@ export const Navbar = () => {
                   <button
                     key={item}
                     onClick={() => {
-                      window.location.href = `/products?search=${encodeURIComponent(item)}`;
+                      navigate(`/products?search=${encodeURIComponent(item)}`);
                       setSearchOpen(false);
                     }}
                     className="px-2.5 py-0.5 bg-white border border-[#EDE6DC] hover:border-black hover:text-black rounded-full transition-colors whitespace-nowrap"
@@ -320,7 +297,6 @@ export const Navbar = () => {
                   </button>
                 ))}
               </div>
->>>>>>> 4dd2845fe1be86344d2e922acf268838bf1dce2b
             </div>
           </div>
         )}
