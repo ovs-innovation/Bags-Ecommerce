@@ -27,12 +27,10 @@ export const BRAND_CONFIG = {
     warrantyMonths: 12,
   },
   navLinks: [
-    { label: 'Home', path: '/' },
-    { label: 'Men', path: '/category/men' },
+    { label: 'Atelier', path: '/atelier' },
     { label: 'Women', path: '/category/women' },
-    { label: 'All Products', path: '/products' },
-    { label: 'About Us', path: '/about' },
-    { label: 'Contact', path: '/contact' },
+    { label: 'Men', path: '/category/men' },
+    { label: 'Journal', path: '/journal' },
   ],
 };
 

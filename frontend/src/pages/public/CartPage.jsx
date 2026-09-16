@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Minus, Plus, X, ShoppingBag, ArrowRight, Truck, RotateCcw } from 'lucide-react';
+import { Minus, Plus, X, ShoppingBag, ArrowRight, Truck, RotateCcw, Heart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useSavedItems } from '../../context/SavedItemsContext';
 import { BRAND_CONFIG } from '../../constants/config';
 
 export const CartPage = () => {
   const { cart, removeFromCart, updateQty, cartTotal } = useCart();
+  const { addToSaved } = useSavedItems();
   const navigate = useNavigate();
 
   const shipping = cartTotal >= BRAND_CONFIG.policy.freeShippingThreshold ? 0 : 149;
@@ -95,10 +97,22 @@ export const CartPage = () => {
                       </button>
                     </div>
 
-                    {/* Price */}
-                    <p className="font-bold text-[#1A1715]">
-                      {BRAND_CONFIG.currency}{(item.price * item.qty).toLocaleString('en-IN')}
-                    </p>
+                    {/* Price & Save for later */}
+                    <div className="text-right">
+                      <p className="font-bold text-[#1A1612]">
+                        {BRAND_CONFIG.currency}{(item.price * item.qty).toLocaleString('en-IN')}
+                      </p>
+                      <button
+                        onClick={() => {
+                          addToSaved(item);
+                          removeFromCart(item.id);
+                        }}
+                        className="inline-flex items-center gap-1 text-[11px] text-[#7F5E38] hover:text-[#1A1612] transition-colors mt-1 font-medium"
+                      >
+                        <Heart className="w-3 h-3" />
+                        <span>Save for later</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

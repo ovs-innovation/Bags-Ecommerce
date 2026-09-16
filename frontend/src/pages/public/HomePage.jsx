@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, Truck, RotateCcw, ShieldCheck, Award, Quote,
@@ -10,157 +10,146 @@ import {
 import ProductCard from '../../components/product/ProductCard';
 import StarRating from '../../components/common/StarRating';
 
-const HERO_SLIDES = [
-  {
-    title: 'Heirloom Leather,',
-    italic: 'Crafted For Generations.',
-    sub: 'Full-grain vegetable-tanned purses, handbags, and wallets — bench-made by artisan hands in India.',
-    cta: 'Shop Women',
-    ctaLink: '/category/women',
-    cta2: 'Shop Men',
-    cta2Link: '/category/men',
-    bg: 'from-[#2C1810] via-[#3D2415] to-[#1A1208]',
-    accent: 'text-gold-400',
-  },
-  {
-    title: 'The Atlas Briefcase',
-    italic: 'Commands Every Room.',
-    sub: 'Heavyweight harness leather. Antique brass hardware. Engineered for the professional who values craftsmanship.',
-    cta: 'Shop Men',
-    ctaLink: '/category/men',
-    cta2: 'View All',
-    cta2Link: '/products',
-    bg: 'from-[#1A1715] via-[#2C2420] to-[#0E0D0C]',
-    accent: 'text-brand-300',
-  },
-];
-
 export const HomePage = () => {
-  const [slide, setSlide] = useState(0);
   const featured = getFeaturedProducts();
   const bestSellers = getBestSellers();
   const newArrivals = getNewArrivals();
 
-  useEffect(() => {
-    const t = setInterval(() => setSlide((s) => (s + 1) % HERO_SLIDES.length), 6000);
-    return () => clearInterval(t);
-  }, []);
-
-  const s = HERO_SLIDES[slide];
-
   return (
-    <div>
-      {/* ──────── HERO ──────── */}
-      <section className={`relative min-h-[88vh] bg-gradient-to-br ${s.bg} flex items-center overflow-hidden transition-all duration-1000`}>
-        {/* Texture overlay */}
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }}
-        />
-
-        {/* Hero image */}
-        <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 opacity-40 lg:opacity-55">
+    <div className="bg-[#FAF7F2] text-[#1A1612]">
+      {/* ──────── HERO SECTION WITH FULL-BLEED BACKGROUND IMAGE (MATCHING REFERENCE) ──────── */}
+      <section className="relative w-full bg-[#FAF7F2] overflow-hidden">
+        {/* Full-bleed background image covering right, top, bottom */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <img
-            src="/hero.jpg"
-            alt="KOSHA leather bags"
-            className="w-full h-full object-cover object-center"
+            src="/kosha-hero-banner.jpg"
+            alt="KOSHA Luxury Handcrafted Leather Goods"
+            className="w-full h-full object-cover object-[72%_center] lg:object-[80%_center] xl:object-right"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#2C1810] via-transparent to-transparent lg:from-[#2C1810] lg:via-[#2C1810]/40 lg:to-transparent" />
-        </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
-          <div className="max-w-xl lg:max-w-2xl">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold-300">
-                Artisanal Heritage · Made in India
-              </span>
-            </div>
+          {/* Desktop Left-to-Right Soft Gradient:
+              Keeps left area solid #FAF7F2 for crisp text legibility,
+              then quickly transitions between 22% and 42% so the saddle bag and accessories
+              remain vibrant, warm, and crystal clear without any hazy wash-out! */}
+          <div
+            className="hidden md:block absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(to right, #FAF7F2 0%, #FAF7F2 22%, rgba(250, 247, 242, 0.88) 28%, rgba(250, 247, 242, 0.45) 35%, rgba(250, 247, 242, 0) 44%)',
+            }}
+          />
 
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] text-white mb-3">
-              {s.title}
-            </h1>
-            <h1 className={`font-serif text-5xl sm:text-6xl lg:text-7xl font-bold italic leading-[1.05] mb-6 ${s.accent}`}>
-              {s.italic}
-            </h1>
-            <p className="text-base sm:text-lg text-white/70 leading-relaxed mb-10 max-w-lg">
-              {s.sub}
-            </p>
+          {/* Mobile Overlay for compact screens */}
+          <div
+            className="md:hidden absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(to bottom, rgba(250, 247, 242, 0.96) 0%, rgba(250, 247, 242, 0.90) 65%, rgba(250, 247, 242, 0.35) 100%)',
+            }}
+          />
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to={s.ctaLink} className="btn-gold text-base px-8 py-4">
-                {s.cta} <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link to={s.cta2Link} className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold text-white border border-white/30 hover:border-white/60 hover:bg-white/10 transition-all">
-                {s.cta2}
-              </Link>
-            </div>
-
-            {/* Stats row */}
-            <div className="flex gap-8 mt-12 pt-8 border-t border-white/15">
-              <div>
-                <p className="font-serif text-3xl font-bold text-white">2,400+</p>
-                <p className="text-xs text-white/50 uppercase tracking-widest mt-0.5">Happy Customers</p>
-              </div>
-              <div>
-                <p className="font-serif text-3xl font-bold text-white">100%</p>
-                <p className="text-xs text-white/50 uppercase tracking-widest mt-0.5">Genuine Leather</p>
-              </div>
-              <div>
-                <p className="font-serif text-3xl font-bold text-white">1 Yr</p>
-                <p className="text-xs text-white/50 uppercase tracking-widest mt-0.5">Warranty</p>
-              </div>
-            </div>
+          {/* 4-point sparkle star in bottom right like in the reference image */}
+          <div className="hidden lg:block absolute bottom-8 right-24 pointer-events-none select-none text-[#C8B896] text-3xl font-serif">
+            ✦
           </div>
         </div>
 
-        {/* Slide controls */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setSlide(i)}
-              className={`h-1 rounded-full transition-all duration-300 ${i === slide ? 'w-8 bg-gold-400' : 'w-3 bg-white/30'}`}
-            />
-          ))}
+        {/* Hero Content overlaid on the left */}
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-10 sm:py-12 lg:py-14 min-h-[420px] sm:min-h-[460px] lg:min-h-[490px] xl:min-h-[510px] flex items-center">
+          <div className="max-w-[580px]">
+            <h1 className="font-serif text-3xl sm:text-[38px] lg:text-[44px] xl:text-[48px] font-medium text-[#1A1612] leading-[1.18] tracking-[-0.01em] mb-4 sm:mb-5">
+              <span className="block">Heirloom Leather,</span>
+              <span className="block">Enduring Silhouettes,</span>
+              <span className="block">Crafted for Generations.</span>
+            </h1>
+
+            <p className="text-[14px] sm:text-[15.5px] text-[#4A423A] leading-[1.6] mb-6 sm:mb-7 max-w-[440px] font-normal">
+              Benchmade in India by master artisans, using only full-grain, vegetable-tanned leather.
+            </p>
+
+            {/* Action Buttons matching reference */}
+            <div className="flex flex-wrap items-center gap-3.5">
+              <Link
+                to="/category/women"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#1A1612] text-white text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.16em] uppercase hover:bg-[#2C241E] active:scale-[0.98] transition-all duration-200"
+              >
+                EXPLORE WOMEN —
+              </Link>
+              <Link
+                to="/category/men"
+                className="inline-flex items-center justify-center px-6 py-3 bg-transparent border border-[#BFB3A4] text-[#1A1612] text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.16em] uppercase hover:border-[#1A1612] hover:bg-black/[0.03] active:scale-[0.98] transition-all duration-200"
+              >
+                EXPLORE MEN —
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ──────── SHOP MEN / WOMEN ──────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      {/* ──────── CERTIFICATION & MATERIAL STRIP (EXACT REFERENCE) ──────── */}
+      <section className="bg-[#FAF7F2] border-y border-[#EDE6DC] py-4 px-4 text-center">
+        <p className="text-[11px] sm:text-[12px] font-medium tracking-[0.24em] text-[#3D352E] uppercase select-none">
+          <span>FULL-GRAIN VACHETTA</span>
+          <span className="mx-3.5 text-[#B0A395]">•</span>
+          <span>TANNERY CERTIFIED</span>
+          <span className="mx-3.5 text-[#B0A395]">•</span>
+          <span>HAND-STITCHED</span>
+        </p>
+      </section>
+
+      {/* ──────── SHOP MEN / WOMEN COLLECTIONS (COMPACT ELEGANT SIZING) ──────── */}
+      <section className="max-w-5xl mx-auto px-6 sm:px-8 py-10 lg:py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Women */}
-          <Link to="/category/women" className="relative group overflow-hidden aspect-[4/5] block">
+          <Link
+            to="/category/women"
+            className="relative group overflow-hidden rounded-sm block shadow-subtle hover:shadow-elevated transition-all duration-300 h-[280px] sm:h-[330px] md:h-[350px]"
+          >
             <img
               src="/women-category.jpg"
               alt="Shop Women"
-              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover object-[center_20%] transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-8">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gold-400 font-bold mb-2">Collection</p>
-              <h2 className="font-serif text-3xl font-bold text-white mb-3">Women's Edit</h2>
-              <p className="text-sm text-white/70 mb-4 max-w-xs">Totes, crossbodys, clutches and slings for the modern Indian woman.</p>
-              <span className="inline-flex items-center gap-2 text-sm font-semibold text-gold-300 group-hover:text-white transition-colors">
-                Explore Collection <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1612]/85 via-[#1A1612]/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[#E6C687] font-semibold mb-1">
+                Collection
+              </p>
+              <h2 className="font-serif text-2xl sm:text-3xl font-normal text-white mb-1.5">
+                Women's Edit
+              </h2>
+              <p className="text-xs text-white/80 mb-3.5 max-w-xs leading-relaxed">
+                Totes, crossbodys, clutches and slings for the modern discerning woman.
+              </p>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-[#FAF7F2] group-hover:text-[#E6C687] transition-colors">
+                Explore Collection <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
               </span>
             </div>
           </Link>
 
           {/* Men */}
-          <Link to="/category/men" className="relative group overflow-hidden aspect-[4/5] block">
+          <Link
+            to="/category/men"
+            className="relative group overflow-hidden rounded-sm block shadow-subtle hover:shadow-elevated transition-all duration-300 h-[280px] sm:h-[330px] md:h-[350px]"
+          >
             <img
               src="/men-category.jpg"
               alt="Shop Men"
-              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover object-[center_20%] transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-8">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gold-400 font-bold mb-2">Collection</p>
-              <h2 className="font-serif text-3xl font-bold text-white mb-3">Men's Edit</h2>
-              <p className="text-sm text-white/70 mb-4 max-w-xs">Briefcases, messenger bags, wallets and card holders for the discerning man.</p>
-              <span className="inline-flex items-center gap-2 text-sm font-semibold text-gold-300 group-hover:text-white transition-colors">
-                Explore Collection <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1612]/85 via-[#1A1612]/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[#E6C687] font-semibold mb-1">
+                Collection
+              </p>
+              <h2 className="font-serif text-2xl sm:text-3xl font-normal text-white mb-1.5">
+                Men's Edit
+              </h2>
+              <p className="text-xs text-white/80 mb-3.5 max-w-xs leading-relaxed">
+                Briefcases, messenger bags, wallets and card holders for the refined gentleman.
+              </p>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-[#FAF7F2] group-hover:text-[#E6C687] transition-colors">
+                Explore Collection <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
               </span>
             </div>
           </Link>
@@ -168,18 +157,22 @@ export const HomePage = () => {
       </section>
 
       {/* ──────── FEATURED PRODUCTS ──────── */}
-      <section className="bg-cream-dark py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+      <section className="py-16 lg:py-24 bg-[#F5EFEB] border-y border-[#EDE6DC]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
             <div>
-              <p className="section-label mb-2"><span className="w-6 h-px bg-brand-500 inline-block" /> Featured Pieces</p>
-              <h2 className="section-heading">Handpicked For You</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7F5E38] mb-2">
+                Handpicked Pieces
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
+                Artisanal Highlights
+              </h2>
             </div>
-            <Link to="/products" className="text-sm font-semibold text-brand-800 hover:text-[#1A1715] flex items-center gap-1.5 transition-colors">
-              View All <ArrowRight className="w-4 h-4" />
+            <Link to="/products" className="text-xs font-semibold uppercase tracking-widest text-[#1A1612] hover:text-[#7F5E38] flex items-center gap-2 transition-colors">
+              View All Creations <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7">
             {featured.slice(0, 4).map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -188,40 +181,95 @@ export const HomePage = () => {
       </section>
 
       {/* ──────── NEW ARRIVALS ──────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+      <section className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-16 lg:py-24">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
           <div>
-            <p className="section-label mb-2"><span className="w-6 h-px bg-brand-500 inline-block" /> Fresh In</p>
-            <h2 className="section-heading">New Arrivals</h2>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7F5E38] mb-2">
+              Fresh Off The Bench
+            </p>
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
+              New Arrivals
+            </h2>
           </div>
-          <Link to="/products?filter=new" className="text-sm font-semibold text-brand-800 hover:text-[#1A1715] flex items-center gap-1.5 transition-colors">
+          <Link to="/products?filter=new" className="text-xs font-semibold uppercase tracking-widest text-[#1A1612] hover:text-[#7F5E38] flex items-center gap-2 transition-colors">
             See All New <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7">
           {newArrivals.slice(0, 4).map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </section>
 
+      {/* ──────── THE BAG COLLECTIVE CAMPAIGN EDITORIAL BANNER (AFTER NEW ARRIVALS) ──────── */}
+      <section className="bg-[#FAF7F2] py-6 sm:py-10 border-y border-[#EDE6DC]">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="relative overflow-hidden bg-[#F6F3EE] border border-[#E8E1D7] rounded-sm shadow-subtle group">
+            <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[380px] lg:min-h-[440px]">
+              
+              {/* Left Column: Editorial Copy & Discover CTA matching reference */}
+              <div className="lg:col-span-5 p-8 sm:p-12 lg:p-16 z-10 flex flex-col justify-center">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#7F5E38] mb-3">
+                  Spring / Summer Edit
+                </p>
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-normal text-[#1A1612] tracking-[0.08em] uppercase leading-[1.18] mb-5">
+                  The Bag Collective
+                </h2>
+                <p className="text-sm sm:text-[15px] text-[#4A423A] leading-[1.65] font-normal max-w-md mb-8">
+                  Crafted with precision, designed for life.<br className="hidden sm:inline" />
+                  Your new essential everyday bags.
+                </p>
+                <div>
+                  <Link
+                    to="/products"
+                    className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-transparent border border-[#1A1612] text-[#1A1612] text-xs font-semibold tracking-[0.22em] uppercase hover:bg-[#1A1612] hover:text-white active:scale-[0.98] transition-all duration-200"
+                  >
+                    <span>DISCOVER</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right Column: High-Fashion Editorial Photography */}
+              <div className="lg:col-span-7 relative h-[320px] sm:h-[400px] lg:h-[460px] overflow-hidden">
+                <img
+                  src="/bag-collective-editorial.jpg"
+                  alt="The Bag Collective — Handcrafted Luxury Bags"
+                  className="w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
+                />
+                
+                {/* Soft subtle left gradient edge on desktop to blend seamlessly with left copy container */}
+                <div
+                  className="hidden lg:block absolute inset-y-0 left-0 w-28 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(to right, #F6F3EE 0%, rgba(246, 243, 238, 0) 100%)',
+                  }}
+                />
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ──────── BEST SELLERS ──────── */}
-      <section className="bg-[#1A1715] py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+      <section className="bg-[#1A1612] py-20 lg:py-28 text-white">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gold-400 font-bold mb-2 flex items-center gap-2">
-                <span className="w-6 h-px bg-gold-500 inline-block" /> Most Loved
+              <p className="text-[11px] uppercase tracking-[0.24em] text-[#E6C687] font-semibold mb-2">
+                Most Cherished
               </p>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white">
                 Best Sellers
               </h2>
             </div>
-            <Link to="/products?filter=bestseller" className="text-sm font-semibold text-gold-400 hover:text-gold-300 flex items-center gap-1.5">
-              View All <ArrowRight className="w-4 h-4" />
+            <Link to="/products?filter=bestseller" className="text-xs uppercase tracking-widest font-semibold text-[#E6C687] hover:text-white flex items-center gap-2 transition-colors">
+              View All Classics <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7">
             {bestSellers.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -230,87 +278,69 @@ export const HomePage = () => {
       </section>
 
       {/* ──────── CRAFTSMANSHIP BANNER ──────── */}
-      <section className="py-20 lg:py-28 bg-leather-texture bg-cream">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <Award className="w-12 h-12 text-brand-700 mx-auto mb-6 animate-float" />
-          <p className="section-label justify-center mb-4">
-            <span className="w-6 h-px bg-brand-500" /> The KOSHA Difference <span className="w-6 h-px bg-brand-500" />
+      <section className="py-20 lg:py-28 bg-[#FAF7F2]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <Award className="w-10 h-10 text-[#9B784E] mx-auto mb-6" />
+          <p className="text-[11px] uppercase tracking-[0.26em] text-[#7F5E38] font-semibold mb-4">
+            The KOSHA Atelier
           </p>
-          <h2 className="section-heading mb-6">
-            Every Stitch Tells<br />a Story
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1A1612] mb-6 leading-tight">
+            Every Stitch Tells<br />an Enduring Story
           </h2>
-          <p className="text-base text-stone-600 leading-relaxed max-w-2xl mx-auto mb-10">
-            We work exclusively with heritage tanneries that use vegetable-tanning — a 200-year-old process using tree bark and natural salts. The leather that emerges is denser, more supple, and develops a deeper patina than anything chrome-tanned leather can produce.
+          <p className="text-base text-[#554C42] leading-relaxed max-w-2xl mx-auto mb-10 font-normal">
+            We work exclusively with heritage tanneries that use vegetable-tanning — a 200-year-old process using organic tree bark and natural oils. The leather that emerges is richer, breathes naturally, and develops a beautiful, personalized patina over generations.
           </p>
-          <Link to="/about" className="btn-primary">
+          <Link
+            to="/about"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.18em] uppercase hover:bg-[#2F2620] transition-colors"
+          >
             Our Leather Story <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
 
       {/* ──────── WHY CHOOSE US ──────── */}
-      <section className="bg-brand-950 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-[#15110E] py-16 border-t border-[#2A231C]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { icon: <Award className="w-8 h-8" />, title: 'Full-Grain Leather', sub: 'Ethically sourced top-grade hides only' },
-              { icon: <Truck className="w-8 h-8" />, title: 'Pan-India Delivery', sub: 'Free shipping on orders over ₹1,999' },
-              { icon: <RotateCcw className="w-8 h-8" />, title: `${BRAND_CONFIG.policy.returnDays}-Day Returns`, sub: 'Hassle-free exchange policy' },
-              { icon: <ShieldCheck className="w-8 h-8" />, title: '1-Year Warranty', sub: 'Artisanal stitching guarantee' },
+              { icon: <Award className="w-7 h-7" />, title: 'Full-Grain Leather', sub: 'Ethically sourced top-grade hides only' },
+              { icon: <Truck className="w-7 h-7" />, title: 'Pan-India Delivery', sub: 'Free shipping on orders over ₹1,999' },
+              { icon: <RotateCcw className="w-7 h-7" />, title: `${BRAND_CONFIG.policy.returnDays}-Day Returns`, sub: 'Hassle-free exchange policy' },
+              { icon: <ShieldCheck className="w-7 h-7" />, title: '1-Year Warranty', sub: 'Artisanal stitching guarantee' },
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center gap-3">
-                <div className="text-gold-400">{item.icon}</div>
-                <h4 className="text-sm font-bold text-white tracking-wide">{item.title}</h4>
-                <p className="text-xs text-brand-300/70 leading-relaxed">{item.sub}</p>
+                <div className="text-[#E6C687]">{item.icon}</div>
+                <h4 className="text-xs sm:text-sm font-semibold text-white tracking-wider uppercase">{item.title}</h4>
+                <p className="text-xs text-[#A89D91] leading-relaxed">{item.sub}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ──────── PROMO BANNER ──────── */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-cognac-600 via-cognac-700 to-brand-900 py-14">
-        <div className="absolute inset-0 opacity-[0.07]"
-          style={{ backgroundImage: `repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)`, backgroundSize: '30px 30px' }}
-        />
-        <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <p className="text-[11px] uppercase tracking-[0.25em] text-white/60 font-bold mb-3">Limited Time</p>
-          <h2 className="font-serif text-4xl sm:text-5xl font-bold text-white mb-4">
-            Up to 30% Off<br />Selected Styles
-          </h2>
-          <p className="text-sm text-white/70 mb-8">
-            End-of-season offer on our most loved bags. Hurry — limited stock at these prices.
-          </p>
-          <Link to="/products" className="btn-gold text-base px-10 py-4">
-            Shop the Sale <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
-
       {/* ──────── TESTIMONIALS ──────── */}
-      <section className="py-16 lg:py-24 bg-cream-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="section-label justify-center mb-3">
-              <span className="w-6 h-px bg-brand-500" /> Real Customers <span className="w-6 h-px bg-brand-500" />
+      <section className="py-20 lg:py-24 bg-[#F5EFEB] border-t border-[#EDE6DC]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="text-center mb-14">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7F5E38] mb-3">
+              Client Chronicles
             </p>
-            <h2 className="section-heading">What Our Customers Say</h2>
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
+              Cherished By Connoisseurs
+            </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {TESTIMONIALS.map((t) => (
-              <div key={t.id} className="bg-white p-6 shadow-card flex flex-col gap-4">
-                <div className="text-gold-400"><Quote className="w-6 h-6 fill-gold-400/30" /></div>
-                <p className="text-sm text-stone-700 leading-relaxed flex-1">"{t.text}"</p>
+              <div key={t.id} className="bg-white p-7 shadow-subtle border border-[#EBE3D8] flex flex-col justify-between">
+                <div>
+                  <Quote className="w-5 h-5 text-[#C5BCB0] mb-3" />
+                  <p className="text-sm text-[#4E453C] leading-relaxed italic mb-6">"{t.text}"</p>
+                </div>
                 <div>
                   <StarRating rating={t.rating} />
-                  <p className="text-xs font-semibold text-brand-800 mt-1">{t.product}</p>
-                </div>
-                <div className="flex items-center gap-3 pt-3 border-t border-brand-100">
-                  <img src={t.avatar} alt={t.name} className="w-9 h-9 rounded-full object-cover" />
-                  <div>
-                    <p className="text-xs font-bold text-[#1A1715]">{t.name}</p>
-                    <p className="text-[10px] text-stone-500">{t.location}</p>
-                  </div>
+                  <p className="text-xs font-semibold text-[#1A1612] mt-3">{t.name}</p>
+                  <p className="text-[11px] text-[#8C7E72]">{t.location}</p>
                 </div>
               </div>
             ))}
@@ -319,25 +349,28 @@ export const HomePage = () => {
       </section>
 
       {/* ──────── NEWSLETTER ──────── */}
-      <section className="bg-brand-900 py-16">
+      <section className="bg-[#FAF7F2] py-20 border-t border-[#EDE6DC]">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white mb-3">
-            Join the Artisan Circle
+          <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612] mb-3">
+            Join the KOSHA Circle
           </h2>
-          <p className="text-sm text-brand-200/70 mb-8 leading-relaxed">
-            Get early access to new launches, leather care guides, exclusive styling tips, and private sale invitations.
+          <p className="text-sm text-[#554C42] mb-8 leading-relaxed max-w-md mx-auto">
+            Receive private exhibition invitations, early access to limited capsule editions, and stories from our workshop.
           </p>
-          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-2.5 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Your email address"
-              className="flex-1 px-4 py-3.5 bg-white/10 border border-white/20 text-white placeholder-white/40 text-sm focus:outline-none focus:border-gold-400 transition-colors"
+              className="flex-1 px-4 py-3.5 bg-white border border-[#D5C9BD] text-[#1A1612] placeholder-[#9E9184] text-sm focus:outline-none focus:border-[#1A1612] transition-colors"
             />
-            <button type="submit" className="btn-gold px-6 py-3.5 whitespace-nowrap">
+            <button
+              type="submit"
+              className="px-7 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.16em] uppercase hover:bg-[#2F2620] transition-colors"
+            >
               Subscribe
             </button>
           </form>
-          <p className="text-[10px] text-brand-300/40 mt-4">No spam. Unsubscribe at any time.</p>
+          <p className="text-[10px] text-[#9E9184] mt-3">We respect your privacy. Unsubscribe at any time.</p>
         </div>
       </section>
     </div>

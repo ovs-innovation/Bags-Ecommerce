@@ -16,7 +16,7 @@ export default {
         cream:   { DEFAULT: '#FAF8F5', dark: '#F0EBE3' },
       },
       fontFamily: {
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        serif: ['Lora', '"Playfair Display"', 'Georgia', 'serif'],
         sans:  ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {

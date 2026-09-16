@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Check } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useSavedItems } from '../../context/SavedItemsContext';
 import StarRating from '../common/StarRating';
 import { BRAND_CONFIG } from '../../constants/config';
 
 export const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
-  const [wishlisted, setWishlisted] = useState(false);
+  const { isSaved, toggleSave } = useSavedItems();
   const [added, setAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  const saved = isSaved(product.id);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -19,10 +22,10 @@ export const ProductCard = ({ product }) => {
     setTimeout(() => setAdded(false), 1800);
   };
 
-  const handleWishlist = (e) => {
+  const handleToggleSave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setWishlisted((prev) => !prev);
+    toggleSave(product);
   };
 
   // Fallback high-res leather image if remote image fails
@@ -61,16 +64,17 @@ export const ProductCard = ({ product }) => {
           )}
         </div>
 
-        {/* Wishlist Button (Independent from Link) */}
+        {/* Wishlist / Saved Button (Independent from Link) */}
         <button
           type="button"
-          onClick={handleWishlist}
+          onClick={handleToggleSave}
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-subtle hover:scale-110 active:scale-95 transition-all z-10"
-          aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-label={saved ? 'Remove from saved items' : 'Save item'}
+          title={saved ? 'Saved in Atelier Vault' : 'Save to Atelier Vault'}
         >
           <Heart
             className={`w-4 h-4 transition-colors ${
-              wishlisted ? 'text-rose-600 fill-rose-600' : 'text-stone-600 hover:text-stone-900'
+              saved ? 'text-rose-600 fill-rose-600' : 'text-stone-600 hover:text-rose-600'
             }`}
           />
         </button>
