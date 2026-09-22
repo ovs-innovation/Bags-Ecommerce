@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   User, Mail, Phone, Shield, KeyRound, ShoppingBag, LogOut,
-  CheckCircle2, AlertCircle, Sparkles, Clock, Calendar
+  CheckCircle2, AlertCircle, Sparkles, Clock, Calendar, ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -43,7 +43,7 @@ export const ProfilePage = () => {
         name: profileForm.name.trim(),
         phone: profileForm.phone.trim(),
       });
-      setProfileMessage({ type: 'success', text: 'Your personal information was updated successfully.' });
+      setProfileMessage({ type: 'success', text: 'Personal coordinates updated successfully.' });
     } catch (err) {
       setProfileMessage({ type: 'error', text: err.message || 'Failed to update profile.' });
     } finally {
@@ -76,7 +76,7 @@ export const ProfilePage = () => {
         currentPassword: securityForm.currentPassword,
         newPassword: securityForm.newPassword,
       });
-      setSecurityMessage({ type: 'success', text: 'Password has been changed successfully.' });
+      setSecurityMessage({ type: 'success', text: 'Security credentials updated successfully.' });
       setSecurityForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {
       setSecurityMessage({ type: 'error', text: err.message || 'Failed to update password.' });
@@ -104,288 +104,266 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div className="bg-[#FAF7F2] min-h-screen text-[#1A1612] py-12 sm:py-16">
+    <div className="bg-fog min-h-screen text-ink py-12 sm:py-16">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header Breadcrumb */}
-        <div className="mb-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7F5E38] mb-1">
-            Private Atelier Account
-          </p>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
+        {/* Header */}
+        <div className="mb-8 border-b border-border pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <span className="badge-new text-[9px] mb-2 inline-block">Member Account</span>
+            <h1 className="font-display text-4xl sm:text-5xl font-bold text-ink uppercase tracking-tight leading-none">
               Welcome, {user?.name?.split(' ')[0] || 'Patron'}
             </h1>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-[#EDE6DC] bg-white hover:bg-red-50 hover:border-red-200 hover:text-red-700 text-xs font-semibold tracking-wider uppercase transition-colors self-start sm:self-auto"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </button>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 px-4 py-2.5 border border-border bg-paper hover:bg-red-50 hover:border-red-200 hover:text-red-700 text-xs font-bold tracking-wider uppercase transition-colors rounded-xs self-start sm:self-auto"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
         </div>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
-          {/* Left Column: Patron Identity Card & Quick Nav */}
+          {/* Left: Identity Card & Nav */}
           <div className="space-y-6">
-            <div className="bg-white border border-[#EDE6DC] p-6 sm:p-7 shadow-subtle rounded-sm">
+            <div className="bg-paper border border-border p-6 sm:p-7 shadow-subtle rounded-xs">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-[#1A1612] text-[#E6C687] font-serif text-xl flex items-center justify-center font-semibold shadow-sm">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'K'}
+                <div className="w-14 h-14 rounded-xs bg-ink text-accent font-display text-2xl flex items-center justify-center font-bold shadow-xs flex-shrink-0">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
-                <div>
-                  <h3 className="font-serif text-lg font-medium text-[#1A1612]">
+                <div className="min-w-0">
+                  <h3 className="font-sans text-base font-extrabold text-ink truncate">
                     {user?.name || 'Member'}
                   </h3>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-widest uppercase bg-[#FAF7F2] border border-[#EDE6DC] text-[#7F5E38] mt-1">
-                    <Sparkles className="w-3 h-3 text-[#B89B74]" />
-                    {user?.role === 'admin' ? 'Atelier Administrator' : 'Artisan Circle Member'}
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xs text-[9px] font-black tracking-widest uppercase bg-ink text-accent mt-1">
+                    <Sparkles className="w-2.5 h-2.5 text-accent" />
+                    {user?.role === 'admin' ? 'Administrator' : 'Circle Member'}
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-3 text-xs text-[#554C42] border-t border-[#EDE6DC] pt-5">
+              <div className="space-y-3 text-xs text-ink/70 border-t border-border pt-5">
                 <div className="flex items-center gap-2.5">
-                  <Mail className="w-4 h-4 text-stone-400 flex-shrink-0" />
+                  <Mail className="w-4 h-4 text-muted flex-shrink-0" />
                   <span className="truncate">{user?.email}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <Phone className="w-4 h-4 text-stone-400 flex-shrink-0" />
+                  <Phone className="w-4 h-4 text-muted flex-shrink-0" />
                   <span>{user?.phone || 'No phone registered'}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <Calendar className="w-4 h-4 text-stone-400 flex-shrink-0" />
-                  <span>Patron since {formatDate(user?.createdAt)}</span>
+                  <Calendar className="w-4 h-4 text-muted flex-shrink-0" />
+                  <span>Member since {formatDate(user?.createdAt)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Quick Navigation Cards */}
-            <div className="bg-white border border-[#EDE6DC] p-4 shadow-subtle divide-y divide-[#EDE6DC] rounded-sm">
+            {/* Quick Links */}
+            <div className="bg-paper border border-border p-2 shadow-subtle divide-y divide-border rounded-xs">
               <Link
                 to="/cart"
-                className="flex items-center justify-between p-3 hover:bg-[#FAF7F2] transition-colors"
+                className="flex items-center justify-between p-3 hover:bg-fog transition-colors rounded-xs"
               >
-                <div className="flex items-center gap-3">
-                  <ShoppingBag className="w-4 h-4 text-[#7F5E38]" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#1A1612]">
+                <div className="flex items-center gap-2.5">
+                  <ShoppingBag className="w-4 h-4 text-accent-mid" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink">
                     Shopping Bag
                   </span>
                 </div>
-                <span className="text-xs font-bold text-[#7F5E38] bg-[#FAF7F2] px-2 py-0.5 border border-[#EDE6DC] rounded-full">
-                  {cartCount} items
+                <span className="text-xs font-black text-ink bg-fog px-2 py-0.5 border border-border rounded-xs">
+                  {cartCount}
                 </span>
               </Link>
+
               <Link
-                to="/products"
-                className="flex items-center justify-between p-3 hover:bg-[#FAF7F2] transition-colors"
+                to="/saved"
+                className="flex items-center justify-between p-3 hover:bg-fog transition-colors rounded-xs"
               >
-                <div className="flex items-center gap-3">
-                  <Sparkles className="w-4 h-4 text-[#7F5E38]" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#1A1612]">
-                    Explore Catalogue
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="w-4 h-4 text-accent-mid" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink">
+                    Saved Vault
                   </span>
                 </div>
-                <span className="text-xs text-stone-400">→</span>
+                <span className="text-xs text-muted">→</span>
               </Link>
             </div>
           </div>
 
-          {/* Right Column: Settings Tabs & Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-white border border-[#EDE6DC] shadow-subtle rounded-sm">
-              
-              {/* Tab Navigation */}
-              <div className="flex border-b border-[#EDE6DC]">
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className={`flex-1 py-4 px-6 text-xs font-semibold tracking-[0.16em] uppercase transition-colors flex items-center justify-center gap-2 ${
-                    activeTab === 'profile'
-                      ? 'border-b-2 border-[#1A1612] text-[#1A1612] bg-[#FAF7F2]/40'
-                      : 'text-stone-400 hover:text-[#1A1612]'
-                  }`}
-                >
-                  <User className="w-4 h-4" />
-                  Profile Details
-                </button>
-                <button
-                  onClick={() => setActiveTab('security')}
-                  className={`flex-1 py-4 px-6 text-xs font-semibold tracking-[0.16em] uppercase transition-colors flex items-center justify-center gap-2 ${
-                    activeTab === 'security'
-                      ? 'border-b-2 border-[#1A1612] text-[#1A1612] bg-[#FAF7F2]/40'
-                      : 'text-stone-400 hover:text-[#1A1612]'
-                  }`}
-                >
-                  <KeyRound className="w-4 h-4" />
-                  Security & Password
-                </button>
-              </div>
-
-              {/* Tab Content: Profile Form */}
-              {activeTab === 'profile' && (
-                <div className="p-6 sm:p-8">
-                  <h2 className="font-serif text-xl font-normal text-[#1A1612] mb-1">
-                    Personal Information
-                  </h2>
-                  <p className="text-xs text-[#7F5E38] mb-6">
-                    Manage your identity details for expedited dispatch and communications.
-                  </p>
-
-                  {profileMessage.text && (
-                    <div
-                      className={`mb-6 p-4 rounded-sm flex items-start gap-2.5 text-xs ${
-                        profileMessage.type === 'success'
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-red-50 text-red-800 border border-red-200'
-                      }`}
-                    >
-                      {profileMessage.type === 'success' ? (
-                        <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600 mt-0.5" />
-                      ) : (
-                        <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600 mt-0.5" />
-                      )}
-                      <span>{profileMessage.text}</span>
-                    </div>
-                  )}
-
-                  <form onSubmit={handleProfileSubmit} className="space-y-5">
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        value={profileForm.name}
-                        onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                        className="w-full px-4 py-3 bg-[#FAF7F2] border border-[#EDE6DC] text-sm text-[#1A1612] focus:outline-none focus:bg-white focus:border-[#1A1612] transition-colors"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        disabled
-                        value={user?.email || ''}
-                        className="w-full px-4 py-3 bg-stone-100 border border-[#EDE6DC] text-sm text-stone-500 cursor-not-allowed select-none"
-                      />
-                      <p className="text-[10px] text-stone-400 mt-1">
-                        Email address is tied to your cryptographic authentication records and cannot be directly modified.
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                        Contact Phone
-                      </label>
-                      <input
-                        type="tel"
-                        value={profileForm.phone}
-                        onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                        placeholder="+91 98765 43210"
-                        className="w-full px-4 py-3 bg-[#FAF7F2] border border-[#EDE6DC] text-sm text-[#1A1612] focus:outline-none focus:bg-white focus:border-[#1A1612] transition-colors"
-                      />
-                    </div>
-
-                    <div className="pt-2">
-                      <button
-                        type="submit"
-                        disabled={isUpdating}
-                        className="px-8 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.18em] uppercase hover:bg-[#2C241E] transition-colors disabled:opacity-50"
-                      >
-                        {isUpdating ? 'Updating Records...' : 'Save Profile Changes'}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              {/* Tab Content: Security & Password */}
-              {activeTab === 'security' && (
-                <div className="p-6 sm:p-8">
-                  <h2 className="font-serif text-xl font-normal text-[#1A1612] mb-1">
-                    Security Credentials
-                  </h2>
-                  <p className="text-xs text-[#7F5E38] mb-6">
-                    Update your account password. All passwords are automatically salted and hashed via Bcrypt.
-                  </p>
-
-                  {securityMessage.text && (
-                    <div
-                      className={`mb-6 p-4 rounded-sm flex items-start gap-2.5 text-xs ${
-                        securityMessage.type === 'success'
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-red-50 text-red-800 border border-red-200'
-                      }`}
-                    >
-                      {securityMessage.type === 'success' ? (
-                        <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600 mt-0.5" />
-                      ) : (
-                        <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600 mt-0.5" />
-                      )}
-                      <span>{securityMessage.text}</span>
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSecuritySubmit} className="space-y-5">
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                        Current Password
-                      </label>
-                      <input
-                        type="password"
-                        value={securityForm.currentPassword}
-                        onChange={(e) => setSecurityForm({ ...securityForm, currentPassword: e.target.value })}
-                        placeholder="••••••••••••"
-                        className="w-full px-4 py-3 bg-[#FAF7F2] border border-[#EDE6DC] text-sm text-[#1A1612] focus:outline-none focus:bg-white focus:border-[#1A1612] transition-colors"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                        New Password
-                      </label>
-                      <input
-                        type="password"
-                        value={securityForm.newPassword}
-                        onChange={(e) => setSecurityForm({ ...securityForm, newPassword: e.target.value })}
-                        placeholder="Minimum 8 characters"
-                        className="w-full px-4 py-3 bg-[#FAF7F2] border border-[#EDE6DC] text-sm text-[#1A1612] focus:outline-none focus:bg-white focus:border-[#1A1612] transition-colors"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                        Confirm New Password
-                      </label>
-                      <input
-                        type="password"
-                        value={securityForm.confirmPassword}
-                        onChange={(e) => setSecurityForm({ ...securityForm, confirmPassword: e.target.value })}
-                        placeholder="Re-enter new password"
-                        className="w-full px-4 py-3 bg-[#FAF7F2] border border-[#EDE6DC] text-sm text-[#1A1612] focus:outline-none focus:bg-white focus:border-[#1A1612] transition-colors"
-                      />
-                    </div>
-
-                    <div className="pt-2">
-                      <button
-                        type="submit"
-                        disabled={isUpdating}
-                        className="px-8 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.18em] uppercase hover:bg-[#2C241E] transition-colors disabled:opacity-50"
-                      >
-                        {isUpdating ? 'Changing Password...' : 'Update Password'}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
+          {/* Right: Settings Tabs & Form */}
+          <div className="lg:col-span-2 bg-paper border border-border shadow-subtle rounded-xs overflow-hidden">
+            
+            {/* Tabs */}
+            <div className="flex border-b border-border bg-fog">
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`flex-1 py-3.5 px-4 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors ${
+                  activeTab === 'profile'
+                    ? 'bg-paper text-ink border-b-2 border-ink'
+                    : 'text-muted hover:text-ink'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                <span>Profile Particulars</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('security')}
+                className={`flex-1 py-3.5 px-4 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors ${
+                  activeTab === 'security'
+                    ? 'bg-paper text-ink border-b-2 border-ink'
+                    : 'text-muted hover:text-ink'
+                }`}
+              >
+                <KeyRound className="w-4 h-4" />
+                <span>Password & Security</span>
+              </button>
             </div>
+
+            {/* Profile Tab Panel */}
+            {activeTab === 'profile' && (
+              <div className="p-6 sm:p-8">
+                {profileMessage.text && (
+                  <div
+                    className={`mb-6 p-3.5 rounded-xs flex items-center gap-2.5 text-xs font-bold animate-fade-in ${
+                      profileMessage.type === 'success'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : 'bg-red-50 text-red-800 border border-red-200'
+                    }`}
+                  >
+                    {profileMessage.type === 'success' ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                    )}
+                    <span>{profileMessage.text}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleProfileSubmit} className="space-y-5">
+                  <div>
+                    <label className="form-label">Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={profileForm.name}
+                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                      className="input text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="form-label">Registered Email</label>
+                    <input
+                      type="email"
+                      disabled
+                      value={user?.email || ''}
+                      className="input text-xs bg-fog/70 cursor-not-allowed opacity-75"
+                    />
+                    <p className="text-[10.5px] text-muted mt-1">
+                      Email address is tied to your membership identity and cannot be altered directly.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="form-label">Contact Telephone</label>
+                    <input
+                      type="tel"
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                      placeholder="+91 98765 43210"
+                      className="input text-xs"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isUpdating}
+                    className="btn-primary py-3.5 px-7 text-xs font-black tracking-widest"
+                  >
+                    {isUpdating ? 'UPDATING...' : 'SAVE MODIFICATIONS'}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* Security Tab Panel */}
+            {activeTab === 'security' && (
+              <div className="p-6 sm:p-8">
+                {securityMessage.text && (
+                  <div
+                    className={`mb-6 p-3.5 rounded-xs flex items-center gap-2.5 text-xs font-bold animate-fade-in ${
+                      securityMessage.type === 'success'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : 'bg-red-50 text-red-800 border border-red-200'
+                    }`}
+                  >
+                    {securityMessage.type === 'success' ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                    )}
+                    <span>{securityMessage.text}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSecuritySubmit} className="space-y-5">
+                  <div>
+                    <label className="form-label">Current Password *</label>
+                    <input
+                      type="password"
+                      required
+                      value={securityForm.currentPassword}
+                      onChange={(e) =>
+                        setSecurityForm({ ...securityForm, currentPassword: e.target.value })
+                      }
+                      placeholder="••••••••••••"
+                      className="input text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="form-label">New Password (8+ characters) *</label>
+                    <input
+                      type="password"
+                      required
+                      value={securityForm.newPassword}
+                      onChange={(e) =>
+                        setSecurityForm({ ...securityForm, newPassword: e.target.value })
+                      }
+                      placeholder="••••••••••••"
+                      className="input text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="form-label">Confirm New Password *</label>
+                    <input
+                      type="password"
+                      required
+                      value={securityForm.confirmPassword}
+                      onChange={(e) =>
+                        setSecurityForm({ ...securityForm, confirmPassword: e.target.value })
+                      }
+                      placeholder="••••••••••••"
+                      className="input text-xs"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isUpdating}
+                    className="btn-primary py-3.5 px-7 text-xs font-black tracking-widest"
+                  >
+                    {isUpdating ? 'UPDATING...' : 'UPDATE PASSWORD'}
+                  </button>
+                </form>
+              </div>
+            )}
+
           </div>
 
         </div>

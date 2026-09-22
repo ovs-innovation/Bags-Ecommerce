@@ -26,17 +26,34 @@ export const AdminSidebar = () => {
 
   return (
     <aside className="w-64 bg-admin-sidebar text-brand-100 flex flex-col border-r border-stone-800 min-h-screen select-none">
-      {/* Brand Header */}
-      <div className="p-6 border-b border-white/10">
-        <div className="flex items-center space-x-2">
-          <span className="font-serif text-2xl font-bold tracking-wider text-white">
-            {ADMIN_CONFIG.brandName}
-          </span>
-          <span className="px-2 py-0.5 text-[10px] uppercase font-bold tracking-widest bg-gold-500/20 text-gold-400 border border-gold-500/30 rounded">
-            Admin
-          </span>
+      {/* Brand Header with Official Logo */}
+      <div className="p-5 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
+            <img
+              src="/logo.png"
+              alt="Avyastore.in"
+              className="w-full h-full object-contain mix-blend-multiply scale-125"
+            />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold tracking-tight text-lg leading-none text-white font-sans">
+                <span className="text-[#C8F376]">avya</span>
+                <span className="text-[#A2BA88]">store</span>
+                <span className="text-xs font-semibold text-[#C8F376]">.in</span>
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="px-1.5 py-0.5 text-[9px] uppercase font-bold tracking-widest bg-[#C8F376]/20 text-[#C8F376] border border-[#C8F376]/40 rounded">
+                Admin
+              </span>
+              <span className="text-[10px] text-stone-400 font-sans tracking-wide">
+                Gen-Z Suite
+              </span>
+            </div>
+          </div>
         </div>
-        <p className="text-xs text-stone-400 mt-1">Standalone Control Suite</p>
       </div>
 
       {/* Nav items */}

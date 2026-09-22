@@ -4,14 +4,17 @@
  * DO NOT hardcode these strings inside React components.
  */
 export const BRAND_CONFIG = {
-  name: 'KOSHA',
-  tagline: 'Handcrafted Luxury Leather',
+  name: 'Avya Store',
+  tagline: 'More Than Trends',
+  slogan: 'Trends Today • Trends Tomorrow • Old Is Gold',
+  signature: '— More Than Trends —',
+  logo: '/logo.png',
   description:
-    'Dedicated to timeless artisanal craftsmanship. Discover our heirloom-grade full-grain leather purses, handbags, wallets, and bespoke accessories tailored for discerning men and women.',
+    'Trends Today, Trends Tomorrow, Old is Gold. Discover curated Gen-Z luxury, artisanal handcrafted leather bags, tech folios, and everyday statement accessories crafted to outlast the hype.',
   currency: '₹',
   currencyCode: 'INR',
   contact: {
-    email: 'care@koshaleather.com',
+    email: 'support@avyastore.com',
     phone: '+91 98765 43210',
     hours: 'Mon - Sat: 10:00 AM - 7:00 PM IST',
     address: 'Artisan Atelier, MG Road, New Delhi, 110001, India',
@@ -28,6 +31,7 @@ export const BRAND_CONFIG = {
   },
   navLinks: [
     { label: 'Home', path: '/' },
+    { label: 'Creations', path: '/products' },
     { label: 'Men', path: '/category/men' },
     { label: 'Women', path: '/category/women' },
     { label: 'About', path: '/about' },

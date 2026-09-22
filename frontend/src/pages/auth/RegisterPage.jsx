@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, ArrowRight, Check, Lock, Mail, User, Phone, AlertCircle, ShieldCheck } from 'lucide-react';
 import { BRAND_CONFIG } from '../../constants/config';
 import { useAuth } from '../../context/AuthContext';
+import { useAuthPrompt } from '../../context/AuthPromptContext';
+import BrandLogo from '../../components/common/BrandLogo';
 
 export const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -10,6 +12,7 @@ export const RegisterPage = () => {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -17,16 +20,23 @@ export const RegisterPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, isAuthenticated } = useAuth();
+  const { executePendingIntent } = useAuthPrompt();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // If already authenticated, redirect
+  const from = location.state?.from?.pathname || location.state?.from || '/';
+
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/', { replace: true });
+      const intentResult = executePendingIntent();
+      if (intentResult && intentResult.redirect) {
+        navigate(intentResult.redirect, { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from, executePendingIntent]);
 
-  // Dynamic password strength scoring
   const passwordCriteria = useMemo(() => {
     const pwd = form.password;
     return {
@@ -75,6 +85,12 @@ export const RegisterPage = () => {
       errs.password = 'Password must be at least 8 characters with upper, lower, and numbers.';
     }
 
+    if (!form.confirmPassword) {
+      errs.confirmPassword = 'Confirmation password is required.';
+    } else if (form.password !== form.confirmPassword) {
+      errs.confirmPassword = 'Passwords do not match.';
+    }
+
     return errs;
   };
 
@@ -98,59 +114,51 @@ export const RegisterPage = () => {
         phone: form.phone.trim(),
         password: form.password,
       });
-      // AuthContext updates user state, redirecting to storefront
+
+      const intentResult = executePendingIntent();
+      if (intentResult && intentResult.redirect) {
+        navigate(intentResult.redirect, { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
-      setApiError(err.message || 'Failed to create your account. Please try again.');
+      setApiError(err.message || 'Failed to create membership account.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1A1612] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#E6C687]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#9B784E]/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
-        <Link to="/" className="inline-block group">
-          <span className="font-serif text-3xl font-bold tracking-[0.24em] text-[#1A1612] uppercase block">
-            {BRAND_CONFIG.name}
-          </span>
-          <span className="text-[10px] tracking-[0.3em] uppercase text-[#7F5E38] font-medium block mt-1">
-            Leather Atelier
-          </span>
-        </Link>
-        <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#1A1612] mt-8 mb-2">
-          Create Your Account
+    <div className="min-h-screen bg-fog text-ink flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <div className="mb-4 flex justify-center">
+          <BrandLogo variant="nav" />
+        </div>
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-ink uppercase tracking-tight mb-2">
+          Create Membership
         </h1>
-        <p className="text-xs sm:text-sm text-[#5C534A] max-w-sm mx-auto">
-          Join the KOSHA Artisan Circle for early collection drops, member privileges, and private ateliers.
+        <p className="text-xs text-muted max-w-sm mx-auto">
+          Join the inner circle for private vault reservations, seamless order tracking, and customized carry.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0 relative z-10">
-        <div className="bg-white border border-[#EDE6DC] shadow-[0_8px_30px_rgb(26,22,18,0.06)] p-8 sm:p-10 rounded-sm">
-          
-          {/* Global Error Banner */}
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+        <div className="bg-paper border border-border shadow-subtle p-8 sm:p-10 rounded-xs">
+
+          {/* Error banner */}
           {apiError && (
-            <div className="mb-6 p-4 bg-red-50/80 border border-red-200 rounded-sm flex items-start gap-3 text-red-800 text-xs leading-relaxed">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600 mt-0.5" />
-              <div className="flex-1">
-                <span className="font-semibold block mb-0.5">Registration Failed</span>
-                <span>{apiError}</span>
-              </div>
+            <div className="mb-6 p-3.5 bg-red-50 border border-red-200 rounded-xs flex items-start gap-2.5 text-red-700 text-xs leading-relaxed animate-fade-in">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 font-medium">{apiError}</div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            {/* Full Name */}
+            {/* Name */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                Full Name <span className="text-red-600">*</span>
-              </label>
+              <label className="form-label">Full Name *</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -158,22 +166,20 @@ export const RegisterPage = () => {
                   autoComplete="name"
                   value={form.name}
                   onChange={update('name')}
-                  placeholder="Aarav Sharma"
-                  className={`w-full pl-10 pr-4 py-3 bg-[#FAF7F2] border text-sm text-[#1A1612] placeholder-stone-400 focus:outline-none focus:bg-white transition-all ${
-                    errors.name ? 'border-red-400 focus:border-red-600' : 'border-[#EDE6DC] focus:border-[#1A1612]'
-                  }`}
+                  placeholder="e.g. Priyanshu Sharma"
+                  className={`input pl-10 text-xs ${errors.name ? 'border-red-500' : ''}`}
                 />
               </div>
-              {errors.name && <p className="text-[11px] text-red-600 mt-1.5 font-medium">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-[11px] text-red-600 mt-1 font-medium">{errors.name}</p>
+              )}
             </div>
 
-            {/* Email Address */}
+            {/* Email */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                Email Address <span className="text-red-600">*</span>
-              </label>
+              <label className="form-label">Email Address *</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -182,21 +188,19 @@ export const RegisterPage = () => {
                   value={form.email}
                   onChange={update('email')}
                   placeholder="name@example.com"
-                  className={`w-full pl-10 pr-4 py-3 bg-[#FAF7F2] border text-sm text-[#1A1612] placeholder-stone-400 focus:outline-none focus:bg-white transition-all ${
-                    errors.email ? 'border-red-400 focus:border-red-600' : 'border-[#EDE6DC] focus:border-[#1A1612]'
-                  }`}
+                  className={`input pl-10 text-xs ${errors.email ? 'border-red-500' : ''}`}
                 />
               </div>
-              {errors.email && <p className="text-[11px] text-red-600 mt-1.5 font-medium">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-[11px] text-red-600 mt-1 font-medium">{errors.email}</p>
+              )}
             </div>
 
-            {/* Phone Number */}
+            {/* Phone */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                Phone Number <span className="text-stone-400 text-[10px] normal-case">(Optional)</span>
-              </label>
+              <label className="form-label">Contact Number (Optional)</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
                   <Phone className="w-4 h-4" />
                 </div>
                 <input
@@ -205,21 +209,19 @@ export const RegisterPage = () => {
                   value={form.phone}
                   onChange={update('phone')}
                   placeholder="+91 98765 43210"
-                  className={`w-full pl-10 pr-4 py-3 bg-[#FAF7F2] border text-sm text-[#1A1612] placeholder-stone-400 focus:outline-none focus:bg-white transition-all ${
-                    errors.phone ? 'border-red-400 focus:border-red-600' : 'border-[#EDE6DC] focus:border-[#1A1612]'
-                  }`}
+                  className={`input pl-10 text-xs ${errors.phone ? 'border-red-500' : ''}`}
                 />
               </div>
-              {errors.phone && <p className="text-[11px] text-red-600 mt-1.5 font-medium">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-[11px] text-red-600 mt-1 font-medium">{errors.phone}</p>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                Password <span className="text-red-600">*</span>
-              </label>
+              <label className="form-label">Password *</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -227,114 +229,97 @@ export const RegisterPage = () => {
                   autoComplete="new-password"
                   value={form.password}
                   onChange={update('password')}
-                  placeholder="At least 8 characters"
-                  className={`w-full pl-10 pr-11 py-3 bg-[#FAF7F2] border text-sm text-[#1A1612] placeholder-stone-400 focus:outline-none focus:bg-white transition-all ${
-                    errors.password ? 'border-red-400 focus:border-red-600' : 'border-[#EDE6DC] focus:border-[#1A1612]'
-                  }`}
+                  placeholder="Minimum 8 characters"
+                  className={`input pl-10 pr-10 text-xs ${errors.password ? 'border-red-500' : ''}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-[#1A1612] transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-ink transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
 
-              {/* Password Strength Meter */}
+              {/* Password strength meter */}
               {form.password && (
-                <div className="mt-2.5 space-y-2">
-                  <div className="w-full h-1 bg-stone-200 rounded-full overflow-hidden">
+                <div className="mt-2 space-y-1.5">
+                  <div className="w-full bg-border h-1.5 rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${
-                        passwordStrengthScore <= 50
-                          ? 'bg-red-500'
-                          : passwordStrengthScore < 100
+                        passwordStrengthScore === 100
+                          ? 'bg-accent-mid'
+                          : passwordStrengthScore >= 50
                           ? 'bg-amber-500'
-                          : 'bg-emerald-600'
+                          : 'bg-red-500'
                       }`}
                       style={{ width: `${passwordStrengthScore}%` }}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-1.5 text-[10.5px] text-[#5C534A]">
-                    <span className={`flex items-center gap-1 ${passwordCriteria.hasLength ? 'text-emerald-700 font-medium' : ''}`}>
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasLength ? 'text-emerald-600' : 'text-stone-300'}`} />
-                      8+ characters
-                    </span>
-                    <span className={`flex items-center gap-1 ${passwordCriteria.hasUpper && passwordCriteria.hasLower ? 'text-emerald-700 font-medium' : ''}`}>
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasUpper && passwordCriteria.hasLower ? 'text-emerald-600' : 'text-stone-300'}`} />
-                      Upper & lowercase
-                    </span>
-                    <span className={`flex items-center gap-1 ${passwordCriteria.hasNumber ? 'text-emerald-700 font-medium' : ''}`}>
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasNumber ? 'text-emerald-600' : 'text-stone-300'}`} />
-                      At least 1 number
-                    </span>
-                    <span className="flex items-center gap-1 text-[#7F5E38]">
-                      <ShieldCheck className="w-3 h-3 text-[#B89B74]" />
-                      Bcrypt Encrypted
-                    </span>
+                  <div className="flex justify-between text-[10px] text-muted">
+                    <span>Criteria: 8+ chars, upper, lower, number</span>
+                    <span className="font-bold text-ink">{passwordStrengthScore}%</span>
                   </div>
                 </div>
               )}
-              {errors.password && <p className="text-[11px] text-red-600 mt-1.5 font-medium">{errors.password}</p>}
+
+              {errors.password && (
+                <p className="text-[11px] text-red-600 mt-1 font-medium">{errors.password}</p>
+              )}
             </div>
 
-            {/* Member Benefits Card */}
-            <div className="p-3.5 bg-[#FAF7F2] border border-[#EDE6DC] rounded-sm space-y-2 mt-2">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7F5E38]">
-                Atelier Member Privileges
-              </p>
-              {[
-                'Handcrafted heirloom warranty with authenticity stamp',
-                'Complimentary bespoke monogramming service',
-                'Priority dispatch on limited numbered runs',
-              ].map((b) => (
-                <div key={b} className="flex items-center gap-2 text-xs text-[#4A423A]">
-                  <Check className="w-3.5 h-3.5 text-[#B89B74] flex-shrink-0" />
-                  <span>{b}</span>
+            {/* Confirm Password */}
+            <div>
+              <label className="form-label">Confirm Password *</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
+                  <Lock className="w-4 h-4" />
                 </div>
-              ))}
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  value={form.confirmPassword}
+                  onChange={update('confirmPassword')}
+                  placeholder="Re-enter password"
+                  className={`input pl-10 pr-10 text-xs ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                />
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-[11px] text-red-600 mt-1 font-medium">{errors.confirmPassword}</p>
+              )}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-2 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.2em] uppercase hover:bg-[#2C241E] active:scale-[0.99] disabled:opacity-60 disabled:pointer-events-none transition-all duration-200 flex items-center justify-center gap-2 shadow-sm"
+              className="btn-primary w-full mt-2 py-4 text-xs font-black tracking-widest"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  <span>Creating Account...</span>
+                  <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                  <span>CREATING ACCOUNT...</span>
                 </>
               ) : (
                 <>
-                  <span>Create Account</span>
+                  <span>CREATE ACCOUNT</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
+
         </div>
 
-        {/* Footnote / Sign In CTA */}
-        <p className="text-center text-xs text-[#5C534A] mt-8">
-          Already have a KOSHA account?{' '}
+        <p className="text-center text-xs text-muted mt-6">
+          Already have an atelier account?{' '}
           <Link
             to="/login"
-            className="text-[#1A1612] font-semibold underline-offset-4 hover:underline hover:text-[#7F5E38] transition-colors"
+            state={location.state}
+            className="text-ink font-bold underline hover:text-accent-mid transition-colors ml-1 uppercase"
           >
             Sign In
-          </Link>
-        </p>
-
-        <p className="text-center mt-4">
-          <Link
-            to="/"
-            className="text-[11px] uppercase tracking-widest text-[#7F5E38] hover:text-[#1A1612] transition-colors"
-          >
-            ← Return to Storefront
           </Link>
         </p>
       </div>

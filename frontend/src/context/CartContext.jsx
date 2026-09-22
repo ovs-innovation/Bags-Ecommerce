@@ -5,16 +5,17 @@ const CartContext = createContext(null);
 const cartReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_ITEM': {
+      const addQty = typeof action.payload.qty === 'number' && action.payload.qty > 0 ? action.payload.qty : 1;
       const existing = state.items.find((i) => i.id === action.payload.id);
       if (existing) {
         return {
           ...state,
           items: state.items.map((i) =>
-            i.id === action.payload.id ? { ...i, qty: i.qty + 1 } : i
+            i.id === action.payload.id ? { ...i, qty: i.qty + addQty } : i
           ),
         };
       }
-      return { ...state, items: [...state.items, { ...action.payload, qty: 1 }] };
+      return { ...state, items: [...state.items, { ...action.payload, qty: addQty }] };
     }
     case 'REMOVE_ITEM':
       return { ...state, items: state.items.filter((i) => i.id !== action.payload) };
@@ -36,7 +37,10 @@ const cartReducer = (state, action) => {
 export const CartProvider = ({ children }) => {
   const [cart, dispatch] = useReducer(cartReducer, { items: [] });
 
-  const addToCart = (product) => dispatch({ type: 'ADD_ITEM', payload: product });
+  const addToCart = (product, qty = 1) => {
+    const quantity = typeof qty === 'number' && qty > 0 ? qty : 1;
+    dispatch({ type: 'ADD_ITEM', payload: { ...product, qty: quantity } });
+  };
   const removeFromCart = (id) => dispatch({ type: 'REMOVE_ITEM', payload: id });
   const updateQty = (id, qty) => dispatch({ type: 'UPDATE_QTY', payload: { id, qty } });
   const clearCart = () => dispatch({ type: 'CLEAR_CART' });
@@ -56,3 +60,5 @@ export const useCart = () => {
   if (!ctx) throw new Error('useCart must be used within CartProvider');
   return ctx;
 };
+
+export default CartContext;

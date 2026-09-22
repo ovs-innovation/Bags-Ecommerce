@@ -36,7 +36,7 @@ const register = async (req, res, next) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Account created successfully. Welcome to KOSHA.',
+      message: 'Account created successfully. Welcome to Avyastore.in.',
       data: {
         token,
         user: {

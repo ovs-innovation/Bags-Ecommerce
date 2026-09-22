@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, ArrowRight, Lock, Mail, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Lock, Mail, AlertCircle } from 'lucide-react';
 import { BRAND_CONFIG } from '../../constants/config';
 import { useAuth } from '../../context/AuthContext';
+import { useAuthPrompt } from '../../context/AuthPromptContext';
+import BrandLogo from '../../components/common/BrandLogo';
 
 export const LoginPage = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -12,18 +14,22 @@ export const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { login, isAuthenticated } = useAuth();
+  const { executePendingIntent } = useAuthPrompt();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Target destination after login (or default home)
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || location.state?.from || '/';
 
-  // If user is already authenticated, redirect immediately
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(from, { replace: true });
+      const intentResult = executePendingIntent();
+      if (intentResult && intentResult.redirect) {
+        navigate(intentResult.redirect, { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, navigate, from, executePendingIntent]);
 
   const validate = () => {
     const errs = {};
@@ -54,7 +60,12 @@ export const LoginPage = () => {
 
     try {
       await login(form.email, form.password);
-      // AuthContext updates state, useEffect will redirect
+      const intentResult = executePendingIntent();
+      if (intentResult && intentResult.redirect) {
+        navigate(intentResult.redirect, { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       setApiError(err.message || 'Failed to sign in. Please verify your credentials.');
     } finally {
@@ -63,50 +74,38 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1A1612] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Subtle luxury ambient texture glow */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 bg-[#E6C687]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-[#9B784E]/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
-        <Link to="/" className="inline-block group">
-          <span className="font-serif text-3xl font-bold tracking-[0.24em] text-[#1A1612] uppercase block">
-            {BRAND_CONFIG.name}
-          </span>
-          <span className="text-[10px] tracking-[0.3em] uppercase text-[#7F5E38] font-medium block mt-1">
-            Luxury Leather Atelier
-          </span>
-        </Link>
-        <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#1A1612] mt-8 mb-2">
+    <div className="min-h-screen bg-fog text-ink flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <div className="mb-4 flex justify-center">
+          <BrandLogo variant="nav" />
+        </div>
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-ink uppercase tracking-tight mb-2">
           Welcome Back
         </h1>
-        <p className="text-xs sm:text-sm text-[#5C534A] max-w-sm mx-auto">
-          Sign in to access your curated orders, saved pieces, and bespoke services.
+        <p className="text-xs text-muted max-w-sm mx-auto">
+          Sign in to access your curated orders, saved drops, and private atelier coordinates.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0 relative z-10">
-        <div className="bg-white border border-[#EDE6DC] shadow-[0_8px_30px_rgb(26,22,18,0.06)] p-8 sm:p-10 rounded-sm">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+        <div className="bg-paper border border-border shadow-subtle p-8 sm:p-10 rounded-xs">
           
           {/* Global API Error Alert */}
           {apiError && (
-            <div className="mb-6 p-4 bg-red-50/80 border border-red-200 rounded-sm flex items-start gap-3 text-red-800 text-xs leading-relaxed animate-fadeIn">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600 mt-0.5" />
-              <div className="flex-1">
-                <span className="font-semibold block mb-0.5">Authentication Error</span>
-                <span>{apiError}</span>
-              </div>
+            <div className="mb-6 p-3.5 bg-red-50 border border-red-200 rounded-xs flex items-start gap-2.5 text-red-700 text-xs leading-relaxed animate-fade-in">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 font-medium">{apiError}</div>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             {/* Email Field */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E] mb-2">
-                Email Address <span className="text-red-600">*</span>
+              <label className="form-label">
+                Email Address *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -118,15 +117,11 @@ export const LoginPage = () => {
                     if (errors.email) setErrors({ ...errors, email: '' });
                   }}
                   placeholder="name@example.com"
-                  className={`w-full pl-10 pr-4 py-3 bg-[#FAF7F2] border text-sm text-[#1A1612] placeholder-stone-400 focus:outline-none focus:bg-white transition-all ${
-                    errors.email
-                      ? 'border-red-400 focus:border-red-600'
-                      : 'border-[#EDE6DC] focus:border-[#1A1612]'
-                  }`}
+                  className={`input pl-10 text-xs ${errors.email ? 'border-red-500' : ''}`}
                 />
               </div>
               {errors.email && (
-                <p className="text-[11px] text-red-600 mt-1.5 flex items-center gap-1 font-medium">
+                <p className="text-[11px] text-red-600 mt-1 font-medium">
                   {errors.email}
                 </p>
               )}
@@ -134,20 +129,20 @@ export const LoginPage = () => {
 
             {/* Password Field */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#3D352E]">
-                  Password <span className="text-red-600">*</span>
+              <div className="flex items-center justify-between mb-1">
+                <label className="form-label mb-0">
+                  Password *
                 </label>
                 <button
                   type="button"
-                  onClick={() => alert('Password recovery link has been dispatched to your email address in test mode.')}
-                  className="text-[11px] text-[#7F5E38] hover:text-[#1A1612] font-medium tracking-wide underline-offset-2 hover:underline transition-colors"
+                  onClick={() => alert('Password reset coordinates dispatched to your registered email.')}
+                  className="text-[10px] text-muted hover:text-ink font-bold uppercase tracking-wider"
                 >
-                  Forgot Password?
+                  Forgot?
                 </button>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -159,23 +154,19 @@ export const LoginPage = () => {
                     if (errors.password) setErrors({ ...errors, password: '' });
                   }}
                   placeholder="••••••••••••"
-                  className={`w-full pl-10 pr-11 py-3 bg-[#FAF7F2] border text-sm text-[#1A1612] placeholder-stone-400 focus:outline-none focus:bg-white transition-all ${
-                    errors.password
-                      ? 'border-red-400 focus:border-red-600'
-                      : 'border-[#EDE6DC] focus:border-[#1A1612]'
-                  }`}
+                  className={`input pl-10 pr-10 text-xs ${errors.password ? 'border-red-500' : ''}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-[#1A1612] transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-ink transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-[11px] text-red-600 mt-1.5 flex items-center gap-1 font-medium">
+                <p className="text-[11px] text-red-600 mt-1 font-medium">
                   {errors.password}
                 </p>
               )}
@@ -185,16 +176,16 @@ export const LoginPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-2 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.2em] uppercase hover:bg-[#2C241E] active:scale-[0.99] disabled:opacity-60 disabled:pointer-events-none transition-all duration-200 flex items-center justify-center gap-2 shadow-sm"
+              className="btn-primary w-full mt-2 py-4 text-xs font-black tracking-widest"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  <span>Authenticating...</span>
+                  <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                  <span>AUTHENTICATING...</span>
                 </>
               ) : (
                 <>
-                  <span>Sign In</span>
+                  <span>SIGN IN</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -202,21 +193,21 @@ export const LoginPage = () => {
           </form>
 
           {/* Social / Alternative Divider */}
-          <div className="relative my-7">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#EDE6DC]" />
+              <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-white text-stone-400 uppercase tracking-widest text-[10px]">
-                Or Authenticate With
+              <span className="px-3 bg-paper text-muted uppercase tracking-widest text-[9.5px] font-bold">
+                Or Connect With
               </span>
             </div>
           </div>
 
           <button
             type="button"
-            onClick={() => alert('Google authentication service ready to link with OAuth2 provider.')}
-            className="w-full py-3 border border-[#EDE6DC] bg-[#FAF7F2]/60 hover:bg-[#FAF7F2] text-xs font-medium text-[#2C241E] transition-colors flex items-center justify-center gap-2.5"
+            onClick={() => alert('Google authentication module active in production.')}
+            className="w-full py-3 border border-border bg-fog hover:bg-paper text-xs font-bold text-ink transition-colors flex items-center justify-center gap-2 rounded-xs"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -240,23 +231,14 @@ export const LoginPage = () => {
           </button>
         </div>
 
-        {/* Footnote / Register CTA */}
-        <p className="text-center text-xs text-[#5C534A] mt-8">
-          Not yet a member of KOSHA Atelier?{' '}
+        <p className="text-center text-xs text-muted mt-6">
+          Not yet registered with Avya Store?{' '}
           <Link
             to="/register"
-            className="text-[#1A1612] font-semibold underline-offset-4 hover:underline hover:text-[#7F5E38] transition-colors"
+            state={location.state}
+            className="text-ink font-bold underline hover:text-accent-mid transition-colors ml-1 uppercase"
           >
             Create an Account
-          </Link>
-        </p>
-
-        <p className="text-center mt-4">
-          <Link
-            to="/"
-            className="text-[11px] uppercase tracking-widest text-[#7F5E38] hover:text-[#1A1612] transition-colors"
-          >
-            ← Return to Storefront
           </Link>
         </p>
       </div>

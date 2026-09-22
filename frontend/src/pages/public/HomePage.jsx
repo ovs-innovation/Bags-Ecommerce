@@ -1,139 +1,232 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, Truck, RotateCcw, ShieldCheck, Award, Quote,
+  Sparkles, Zap, Flame, Compass, Shirt, Sofa, Smartphone, Gift, ShoppingCart,
+  ArrowUpRight, Star, CheckCircle2
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../../constants/config';
-import {
-  getFeaturedProducts, getBestSellers, getNewArrivals, TESTIMONIALS,
-} from '../../data/mockData';
+import { TESTIMONIALS } from '../../data/mockData';
 import ProductCard from '../../components/product/ProductCard';
 import StarRating from '../../components/common/StarRating';
+import { productService } from '../../services/api';
+import BrandLogo from '../../components/common/BrandLogo';
 
 export const HomePage = () => {
-  const featured = getFeaturedProducts();
-  const bestSellers = getBestSellers();
-  const newArrivals = getNewArrivals();
+  const [products, setProducts] = useState([]);
+  const [selectedVibe, setSelectedVibe] = useState('all');
+
+  useEffect(() => {
+    let isMounted = true;
+    productService
+      .getProducts()
+      .then((data) => {
+        if (isMounted && data.products && Array.isArray(data.products)) {
+          setProducts(
+            data.products.map((p) => ({
+              ...p,
+              id: p._id || p.id,
+              images:
+                Array.isArray(p.images) && p.images.length > 0
+                  ? p.images
+                  : ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80'],
+            }))
+          );
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed to fetch home products:', err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Filter based on Gen-Z aesthetic vibes
+  const filteredProducts = products.filter((p) => {
+    if (selectedVibe === 'all') return true;
+    if (selectedVibe === 'clean-girl') return p.category === 'tote' || p.category === 'clutch';
+    if (selectedVibe === 'commuter') return p.category === 'briefcase' || p.category === 'sling';
+    if (selectedVibe === 'vintage')
+      return p.color === 'Cognac' || p.color === 'Dark Mahogany' || p.color === 'Tan';
+    if (selectedVibe === 'minimalist') return p.category === 'wallet' || p.price < 3000;
+    return true;
+  });
+
+  const featured = products.filter((p) => p.featured);
+  const displayFeatured = featured.length > 0 ? featured : products;
+  const newArrivals = products.filter((p) => p.newArrival);
+  const displayNewArrivals = newArrivals.length > 0 ? newArrivals : products;
+  const bestSellers =
+    products.filter((p) => p.bestSeller).length > 0
+      ? products.filter((p) => p.bestSeller)
+      : products.slice(0, 4);
 
   return (
-    <div className="bg-[#FAF7F2] text-[#1A1612]">
-      {/* ──────── HERO SECTION WITH FULL-BLEED BACKGROUND IMAGE (MATCHING REFERENCE) ──────── */}
-      <section className="relative w-full bg-[#FAF7F2] overflow-hidden">
-        {/* Full-bleed background image covering right, top, bottom */}
+    <div className="bg-fog text-ink selection:bg-accent selection:text-ink">
+
+      {/* ═══════════════════════════════════════════════════════════════
+          1. EDITORIAL HIGH-IMPACT HERO SECTION
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="relative w-full bg-paper overflow-hidden border-b border-border">
+        {/* Visual Background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src="/kosha-hero-banner.jpg"
-            alt="KOSHA Luxury Handcrafted Leather Goods"
-            className="w-full h-full object-cover object-[72%_center] lg:object-[80%_center] xl:object-right"
+            alt="Avya Store Gen-Z Luxury Handcrafted Leather Goods"
+            className="w-full h-full object-cover object-[72%_center] lg:object-[80%_center] xl:object-right filter brightness-[0.98] contrast-[1.02]"
           />
 
-          {/* Desktop Left-to-Right Soft Gradient:
-              Keeps left area solid #FAF7F2 for crisp text legibility,
-              then quickly transitions between 22% and 42% so the saddle bag and accessories
-              remain vibrant, warm, and crystal clear without any hazy wash-out! */}
+          {/* Desktop Mask for crisp editorial typography */}
           <div
             className="hidden md:block absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(to right, #FAF7F2 0%, #FAF7F2 26%, rgba(250, 247, 242, 0.92) 33%, rgba(250, 247, 242, 0.55) 42%, rgba(250, 247, 242, 0) 52%)',
+                'linear-gradient(to right, #FAFAF8 0%, #FAFAF8 32%, rgba(250, 250, 248, 0.94) 42%, rgba(250, 250, 248, 0.65) 54%, rgba(250, 250, 248, 0) 70%)',
             }}
           />
 
-          {/* Mobile Overlay for compact screens */}
+          {/* Mobile Overlay */}
           <div
             className="md:hidden absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(to bottom, rgba(250, 247, 242, 0.96) 0%, rgba(250, 247, 242, 0.90) 65%, rgba(250, 247, 242, 0.35) 100%)',
+                'linear-gradient(to bottom, rgba(250, 250, 248, 0.97) 0%, rgba(250, 250, 248, 0.90) 70%, rgba(250, 250, 248, 0.45) 100%)',
             }}
           />
 
-          {/* 4-point sparkle star in bottom right like in the reference image */}
-          <div className="hidden lg:block absolute bottom-8 right-24 pointer-events-none select-none text-[#C8B896] text-3xl font-serif">
+          {/* Decorative Sparkle */}
+          <div className="hidden lg:block absolute bottom-10 right-20 pointer-events-none select-none text-accent text-5xl font-serif">
             ✦
           </div>
         </div>
 
-        {/* Hero Content overlaid on the left */}
-        <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-10 sm:py-12 lg:py-14 min-h-[450px] sm:min-h-[460px] lg:min-h-[500px] xl:min-h-[510px] flex items-center">
-          <div className="max-w-[580px]">
-            <h1 className="font-serif text-3xl sm:text-[38px] lg:text-[44px] xl:text-[48px] font-medium leading-[1.18] tracking-[-0.01em] mb-4 sm:mb-5">
-              <span className="block text-[#9B6A38]">Heirloom Leather,</span>
-              <span className="block text-[#1A1612]">Enduring Silhouettes,</span>
-              <span className="block text-[#1A1612]">Crafted for Generations.</span>
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-14 sm:py-20 lg:py-24 min-h-[540px] sm:min-h-[580px] lg:min-h-[640px] flex items-center">
+          <div className="max-w-[640px] animate-fade-up">
+
+            {/* Gen-Z Community Proof Pill */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-ink text-accent text-[11px] font-bold uppercase tracking-wider mb-5 rounded-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              <span>18K+ STYLE CURATORS</span>
+              <span className="text-white/40">•</span>
+              <span className="text-white tracking-widest font-normal">DROP 04 LIVE</span>
+            </div>
+
+            {/* Editorial Headline */}
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl tracking-tight text-ink uppercase leading-[0.92] mb-4">
+              YOUR STYLE.<br />
+              <span className="text-accent-mid">YOUR ERA.</span>
             </h1>
 
-            <p className="text-[14px] sm:text-[15.5px] text-[#4A423A] leading-[1.6] mb-6 sm:mb-7 max-w-[440px] font-normal">
-              Benchmade in India by master artisans, using only full-grain, vegetable-tanned leather.
+            {/* Sub-headline & Slogan */}
+            <p className="font-serif italic text-base sm:text-xl text-ink/75 mb-4">
+              "Trends Today • Trends Tomorrow • Old Is Gold"
             </p>
 
-            {/* Action Buttons with luxury interactive animations */}
-            <div className="flex flex-wrap items-center gap-3.5">
-              {/* Primary Button: Explore Women */}
-              <Link
-                to="/category/women"
-                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 bg-[#1A1612] text-white text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.18em] uppercase rounded-xs hover:bg-[#2A221B] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-[0.98] transition-all duration-300"
-              >
-                {/* Shimmer sweep effect */}
-                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+            <p className="text-sm sm:text-base text-ink/65 leading-relaxed mb-8 max-w-[500px] font-normal">
+              Curated luxury handcrafted from 100% ethical full-grain vegetable-tanned leather. Built for the generation who prioritize timeless substance over disposable hype.
+            </p>
 
-                <span className="relative z-10">EXPLORE WOMEN</span>
-                <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5 text-[#E6C687]" />
+            {/* High-Contrast Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3.5">
+              <Link
+                to="/products"
+                className="btn-accent px-8 py-4 text-xs font-black tracking-[0.16em] inline-flex items-center gap-2 shadow-sm hover:shadow-glow transition-all"
+              >
+                <span>EXPLORE THE VAULT</span>
+                <Zap className="w-4 h-4" />
               </Link>
 
-              {/* Secondary Button: Explore Men */}
               <Link
-                to="/category/men"
-                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 bg-transparent border border-[#AFA190] text-[#1A1612] text-[11.5px] sm:text-[12.5px] font-semibold tracking-[0.18em] uppercase rounded-xs hover:border-[#1A1612] hover:bg-[#1A1612] hover:text-white hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] transition-all duration-300"
+                to="/about"
+                className="btn-outline px-7 py-4 text-xs font-bold tracking-[0.16em] inline-flex items-center gap-2 bg-paper/80 backdrop-blur-xs"
               >
-                {/* Shimmer sweep effect */}
-                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
-
-                <span className="relative z-10">EXPLORE MEN</span>
-                <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5 group-hover:text-[#E6C687]" />
+                <span>OUR PHILOSOPHY</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+
+            {/* Micro Highlights */}
+            <div className="flex flex-wrap items-center gap-5 sm:gap-7 mt-9 pt-6 border-t border-border text-xs font-semibold text-ink/80">
+              <span className="flex items-center gap-1.5">
+                <Flame className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                <span>Viral Silhouettes</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-accent-mid flex-shrink-0" />
+                <span>100% Eco Veg-Tan Hide</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Truck className="w-4 h-4 text-ink flex-shrink-0" />
+                <span>Free Express Shipping</span>
+              </span>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ──────── CERTIFICATION & MATERIAL STRIP (EXACT REFERENCE) ──────── */}
-      <section className="bg-[#FAF7F2] border-y border-[#EDE6DC] py-4 px-4 text-center">
-        <p className="text-[11px] sm:text-[12px] font-medium tracking-[0.24em] text-[#3D352E] uppercase select-none">
-          <span>FULL-GRAIN VACHETTA</span>
-          <span className="mx-3.5 text-[#B0A395]">•</span>
-          <span>TANNERY CERTIFIED</span>
-          <span className="mx-3.5 text-[#B0A395]">•</span>
-          <span>HAND-STITCHED</span>
-        </p>
+      {/* ═══════════════════════════════════════════════════════════════
+          2. LIFESTYLE CAPSULE STRIP (FASHION, HOME, GADGETS, LIFESTYLE)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="bg-paper border-b border-border py-6 px-4">
+        <div className="max-w-[1440px] mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+            {[
+              { label: 'Fashion', sub: 'Totes & Slings', icon: <Shirt className="w-4 h-4" />, link: '/products' },
+              { label: 'Home', sub: 'Desk & Living', icon: <Sofa className="w-4 h-4" />, link: '/category/women' },
+              { label: 'Gadgets', sub: 'Laptop Folios', icon: <Smartphone className="w-4 h-4" />, link: '/category/men' },
+              { label: 'Lifestyle', sub: 'Cardholders & Wallets', icon: <Gift className="w-4 h-4" />, link: '/products' },
+              { label: 'Archive', sub: 'Curated Vault', icon: <ShoppingCart className="w-4 h-4" />, link: '/products' },
+            ].map((cat, idx) => (
+              <Link
+                key={idx}
+                to={cat.link}
+                className="group p-3.5 bg-fog hover:bg-paper border border-border/80 hover:border-ink/40 transition-all flex items-center gap-3 rounded-xs"
+              >
+                <div className="w-9 h-9 bg-paper group-hover:bg-accent text-ink rounded-xs flex items-center justify-center border border-border/60 transition-colors flex-shrink-0">
+                  {cat.icon}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-extrabold uppercase tracking-wider text-ink group-hover:text-accent-dark transition-colors truncate">
+                    {cat.label}
+                  </p>
+                  <p className="text-[10.5px] text-muted truncate">{cat.sub}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* ──────── SHOP MEN / WOMEN COLLECTIONS (COMPACT ELEGANT SIZING) ──────── */}
-      <section className="max-w-5xl mx-auto px-6 sm:px-8 py-10 lg:py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* ═══════════════════════════════════════════════════════════════
+          3. DUAL EDITORIAL CAPSULES: WOMEN'S EDIT & MEN'S EDIT
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+          
           {/* Women */}
           <Link
             to="/category/women"
-            className="relative group overflow-hidden rounded-sm block shadow-subtle hover:shadow-elevated transition-all duration-300 h-[280px] sm:h-[330px] md:h-[350px]"
+            className="relative group overflow-hidden block bg-ink rounded-xs h-[300px] sm:h-[360px] md:h-[400px] shadow-sm hover:shadow-elevated transition-all duration-300"
           >
             <img
               src="/women-category.jpg"
-              alt="Shop Women"
-              className="w-full h-full object-cover object-[center_20%] transition-transform duration-700 group-hover:scale-105"
+              alt="Women's Edit"
+              className="w-full h-full object-cover object-[center_25%] transition-transform duration-700 ease-out group-hover:scale-105 opacity-90 group-hover:opacity-95"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1612]/85 via-[#1A1612]/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-[#E6C687] font-semibold mb-1">
-                Collection
-              </p>
-              <h2 className="font-serif text-2xl sm:text-3xl font-normal text-white mb-1.5">
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/35 to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <span className="badge-new text-[9px] mb-2 inline-block">Capsule 01</span>
+              <h2 className="font-display text-4xl sm:text-5xl text-paper tracking-wide uppercase leading-none mb-1">
                 Women's Edit
               </h2>
-              <p className="text-xs text-white/80 mb-3.5 max-w-xs leading-relaxed">
-                Totes, crossbodys, clutches and slings for the modern discerning woman.
+              <p className="text-xs sm:text-sm text-fog/75 max-w-sm mb-4 line-clamp-2">
+                Sculpted totes, effortless crossbodys, and evening clutches tailored for modern grace.
               </p>
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-[#FAF7F2] group-hover:text-[#E6C687] transition-colors">
-                Explore Collection <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-accent group-hover:underline">
+                Explore Edit <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
               </span>
             </div>
           </Link>
@@ -141,120 +234,127 @@ export const HomePage = () => {
           {/* Men */}
           <Link
             to="/category/men"
-            className="relative group overflow-hidden rounded-sm block shadow-subtle hover:shadow-elevated transition-all duration-300 h-[280px] sm:h-[330px] md:h-[350px]"
+            className="relative group overflow-hidden block bg-ink rounded-xs h-[300px] sm:h-[360px] md:h-[400px] shadow-sm hover:shadow-elevated transition-all duration-300"
           >
             <img
               src="/men-category.jpg"
-              alt="Shop Men"
-              className="w-full h-full object-cover object-[center_20%] transition-transform duration-700 group-hover:scale-105"
+              alt="Men's Edit"
+              className="w-full h-full object-cover object-[center_20%] transition-transform duration-700 ease-out group-hover:scale-105 opacity-90 group-hover:opacity-95"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1612]/85 via-[#1A1612]/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-[#E6C687] font-semibold mb-1">
-                Collection
-              </p>
-              <h2 className="font-serif text-2xl sm:text-3xl font-normal text-white mb-1.5">
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/35 to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <span className="badge-new text-[9px] mb-2 inline-block">Capsule 02</span>
+              <h2 className="font-display text-4xl sm:text-5xl text-paper tracking-wide uppercase leading-none mb-1">
                 Men's Edit
               </h2>
-              <p className="text-xs text-white/80 mb-3.5 max-w-xs leading-relaxed">
-                Briefcases, messenger bags, wallets and card holders for the refined gentleman.
+              <p className="text-xs sm:text-sm text-fog/75 max-w-sm mb-4 line-clamp-2">
+                Heritage briefcases, slim bifold wallets, and urban slings engineered to outlast the hype.
               </p>
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-[#FAF7F2] group-hover:text-[#E6C687] transition-colors">
-                Explore Collection <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-accent group-hover:underline">
+                Explore Edit <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
               </span>
             </div>
           </Link>
+
         </div>
       </section>
 
-      {/* ──────── FEATURED PRODUCTS ──────── */}
-      <section className="py-16 lg:py-24 bg-[#F5EFEB] border-y border-[#EDE6DC]">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+      {/* ═══════════════════════════════════════════════════════════════
+          4. PRODUCT DISCOVERY: CURATED DROPS WITH GEN-Z VIBE CHIPS
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="py-14 sm:py-20 bg-paper border-y border-border">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
+          
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7F5E38] mb-2">
-                Handpicked Pieces
+              <p className="section-label mb-2">
+                <span>✦</span> TRENDS TODAY • OLD IS GOLD
               </p>
-              <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
-                Artisanal Highlights
+              <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-ink uppercase tracking-tight leading-none">
+                Curated Drops & Vault Silhouettes
               </h2>
             </div>
-            <Link to="/products" className="text-xs font-semibold uppercase tracking-widest text-[#1A1612] hover:text-[#7F5E38] flex items-center gap-2 transition-colors">
-              View All Creations <ArrowRight className="w-4 h-4" />
+            <Link
+              to="/products"
+              className="text-xs font-black uppercase tracking-widest text-ink hover:text-accent-dark flex items-center gap-1.5 transition-colors self-start sm:self-auto"
+            >
+              <span>View All 12 Creations</span>
+              <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7">
-            {featured.slice(0, 4).map((p) => (
+
+          {/* Vibe Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 no-scrollbar">
+            {[
+              { id: 'all', label: '⚡ All Drops' },
+              { id: 'clean-girl', label: '✨ Clean Girl' },
+              { id: 'commuter', label: '💼 Downtown Commuter' },
+              { id: 'vintage', label: '🌿 Old Is Gold Vault' },
+              { id: 'minimalist', label: '🎯 Minimalist' },
+            ].map((chip) => (
+              <button
+                key={chip.id}
+                onClick={() => setSelectedVibe(chip.id)}
+                className={`flex-shrink-0 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-150 rounded-xs ${
+                  selectedVibe === chip.id
+                    ? 'bg-ink text-accent shadow-xs'
+                    : 'bg-fog border border-border text-ink/70 hover:text-ink hover:border-ink/40'
+                }`}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+            {filteredProducts.slice(0, 8).map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* ──────── NEW ARRIVALS ──────── */}
-      <section className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-16 lg:py-24">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7F5E38] mb-2">
-              Fresh Off The Bench
-            </p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
-              New Arrivals
-            </h2>
-          </div>
-          <Link to="/products?filter=new" className="text-xs font-semibold uppercase tracking-widest text-[#1A1612] hover:text-[#7F5E38] flex items-center gap-2 transition-colors">
-            See All New <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7">
-          {newArrivals.slice(0, 4).map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
-
-      {/* ──────── THE BAG COLLECTIVE CAMPAIGN EDITORIAL BANNER (AFTER NEW ARRIVALS) ──────── */}
-      <section className="bg-[#FAF7F2] py-6 sm:py-10 border-y border-[#EDE6DC]">
+      {/* ═══════════════════════════════════════════════════════════════
+          5. EDITORIAL CAMPAIGN: THE BAG COLLECTIVE
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="bg-fog py-12 sm:py-16 border-b border-border">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
-          <div className="relative overflow-hidden bg-[#F6F3EE] border border-[#E8E1D7] rounded-sm shadow-subtle group">
-            <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[380px] lg:min-h-[440px]">
+          <div className="relative overflow-hidden bg-paper border border-border rounded-xs shadow-subtle group">
+            <div className="grid grid-cols-1 lg:grid-cols-12 items-center min-h-[400px] lg:min-h-[460px]">
 
-              {/* Left Column: Editorial Copy & Discover CTA matching reference */}
+              {/* Editorial Copy */}
               <div className="lg:col-span-5 p-8 sm:p-12 lg:p-16 z-10 flex flex-col justify-center">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#7F5E38] mb-3">
-                  Spring / Summer Edit
-                </p>
-                <h2 className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-normal text-[#1A1612] tracking-[0.08em] uppercase leading-[1.18] mb-5">
+                <span className="badge-new text-[9px] w-fit mb-4">Spring / Summer Capsule</span>
+                <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-ink tracking-tight uppercase leading-[0.95] mb-4">
                   The Bag Collective
                 </h2>
-                <p className="text-sm sm:text-[15px] text-[#4A423A] leading-[1.65] font-normal max-w-md mb-8">
-                  Crafted with precision, designed for life.<br className="hidden sm:inline" />
-                  Your new essential everyday bags.
+                <p className="text-sm sm:text-[15px] text-ink/70 leading-relaxed max-w-md mb-8">
+                  Architectural silhouettes engineered with single-hide continuous construction. Heirloom grade, modern in cadence.
                 </p>
                 <div>
                   <Link
                     to="/products"
-                    className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-transparent border border-[#1A1612] text-[#1A1612] text-xs font-semibold tracking-[0.22em] uppercase hover:bg-[#1A1612] hover:text-white active:scale-[0.98] transition-all duration-200"
+                    className="btn-primary px-8 py-3.5 text-xs font-black tracking-widest inline-flex items-center gap-2"
                   >
-                    <span>DISCOVER</span>
+                    <span>DISCOVER DROP</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </div>
 
-              {/* Right Column: High-Fashion Editorial Photography */}
+              {/* Editorial Photography */}
               <div className="lg:col-span-7 relative h-[320px] sm:h-[400px] lg:h-[460px] overflow-hidden">
                 <img
                   src="/bag-collective-editorial.jpg"
-                  alt="The Bag Collective — Handcrafted Luxury Bags"
+                  alt="The Bag Collective"
                   className="w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
                 />
-
-                {/* Soft subtle left gradient edge on desktop to blend seamlessly with left copy container */}
                 <div
-                  className="hidden lg:block absolute inset-y-0 left-0 w-28 pointer-events-none"
+                  className="hidden lg:block absolute inset-y-0 left-0 w-24 pointer-events-none"
                   style={{
-                    background: 'linear-gradient(to right, #F6F3EE 0%, rgba(246, 243, 238, 0) 100%)',
+                    background: 'linear-gradient(to right, #FAFAF8 0%, rgba(250, 250, 248, 0) 100%)',
                   }}
                 />
               </div>
@@ -264,23 +364,30 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* ──────── BEST SELLERS ──────── */}
-      <section className="bg-[#1A1612] py-20 lg:py-28 text-white">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+      {/* ═══════════════════════════════════════════════════════════════
+          6. HIGH-CONTRAST BEST SELLERS (DEEP INK THEME)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="bg-ink py-16 sm:py-24 text-fog">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-12 gap-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-[#E6C687] font-semibold mb-2">
-                Most Cherished
+              <p className="text-[11px] uppercase tracking-[0.24em] text-accent font-bold mb-2">
+                ✦ Most Cherished Icons
               </p>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white">
+              <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white uppercase tracking-tight leading-none">
                 Best Sellers
               </h2>
             </div>
-            <Link to="/products?filter=bestseller" className="text-xs uppercase tracking-widest font-semibold text-[#E6C687] hover:text-white flex items-center gap-2 transition-colors">
-              View All Classics <ArrowRight className="w-4 h-4" />
+            <Link
+              to="/products?filter=bestseller"
+              className="text-xs uppercase tracking-widest font-black text-accent hover:underline flex items-center gap-1.5 transition-colors self-start sm:self-auto"
+            >
+              <span>View All Classics</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7">
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
             {bestSellers.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -288,70 +395,62 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* ──────── CRAFTSMANSHIP BANNER ──────── */}
-      <section className="py-20 lg:py-28 bg-[#FAF7F2]">
+      {/* ═══════════════════════════════════════════════════════════════
+          7. BRAND MANIFESTO & OLD IS GOLD PHILOSOPHY
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="py-16 sm:py-24 bg-paper border-b border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <Award className="w-10 h-10 text-[#9B784E] mx-auto mb-6" />
-          <p className="text-[11px] uppercase tracking-[0.26em] text-[#7F5E38] font-semibold mb-4">
-            The KOSHA Atelier
+          <div className="mb-6 flex justify-center">
+            <BrandLogo variant="badge" />
+          </div>
+          <p className="text-xs uppercase tracking-[0.28em] text-accent-mid font-bold mb-3">
+            OLD IS GOLD • MORE THAN TRENDS
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1A1612] mb-6 leading-tight">
-            Every Stitch Tells<br />an Enduring Story
+          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-ink uppercase tracking-tight leading-none mb-6">
+            Drip Built To Outlast<br />The Fast-Fashion Hype
           </h2>
-          <p className="text-base text-[#554C42] leading-relaxed max-w-2xl mx-auto mb-10 font-normal">
-            We work exclusively with heritage tanneries that use vegetable-tanning — a 200-year-old process using organic tree bark and natural oils. The leather that emerges is richer, breathes naturally, and develops a beautiful, personalized patina over generations.
+          <p className="text-sm sm:text-base text-ink/75 leading-relaxed max-w-2xl mx-auto mb-8 font-normal">
+            In an era of hyper-disposable fast fashion, Avya Store was founded with a rebellious conviction: <strong className="text-ink">true style gets better with time</strong>. Crafted using 100% full-grain, vegetable-tanned leather that breathes and develops a personal, rich patina unique to your journey.
           </p>
           <Link
             to="/about"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.18em] uppercase hover:bg-[#2F2620] transition-colors"
+            className="btn-primary px-8 py-3.5 text-xs font-black tracking-widest"
           >
-            Our Leather Story <ArrowRight className="w-4 h-4" />
+            <span>READ OUR MANIFESTO</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
 
-      {/* ──────── WHY CHOOSE US ──────── */}
-      <section className="bg-[#15110E] py-16 border-t border-[#2A231C]">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { icon: <Award className="w-7 h-7" />, title: 'Full-Grain Leather', sub: 'Ethically sourced top-grade hides only' },
-              { icon: <Truck className="w-7 h-7" />, title: 'Pan-India Delivery', sub: 'Free shipping on orders over ₹1,999' },
-              { icon: <RotateCcw className="w-7 h-7" />, title: `${BRAND_CONFIG.policy.returnDays}-Day Returns`, sub: 'Hassle-free exchange policy' },
-              { icon: <ShieldCheck className="w-7 h-7" />, title: '1-Year Warranty', sub: 'Artisanal stitching guarantee' },
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col items-center gap-3">
-                <div className="text-[#E6C687]">{item.icon}</div>
-                <h4 className="text-xs sm:text-sm font-semibold text-white tracking-wider uppercase">{item.title}</h4>
-                <p className="text-xs text-[#A89D91] leading-relaxed">{item.sub}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ──────── TESTIMONIALS ──────── */}
-      <section className="py-20 lg:py-24 bg-[#F5EFEB] border-t border-[#EDE6DC]">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="text-center mb-14">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7F5E38] mb-3">
+      {/* ═══════════════════════════════════════════════════════════════
+          8. CLIENT CHRONICLES (TESTIMONIALS)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="py-16 sm:py-20 bg-fog border-b border-border">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="text-center mb-12">
+            <p className="section-label mb-2">Verified Patron Reviews</p>
+            <h2 className="font-display text-4xl sm:text-5xl text-ink uppercase tracking-tight leading-none">
               Client Chronicles
-            </p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612]">
-              Cherished By Connoisseurs
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {TESTIMONIALS.map((t) => (
-              <div key={t.id} className="bg-white p-7 shadow-subtle border border-[#EBE3D8] flex flex-col justify-between">
+              <div
+                key={t.id}
+                className="bg-paper p-6 sm:p-7 border border-border/80 flex flex-col justify-between rounded-xs"
+              >
                 <div>
-                  <Quote className="w-5 h-5 text-[#C5BCB0] mb-3" />
-                  <p className="text-sm text-[#4E453C] leading-relaxed italic mb-6">"{t.text}"</p>
+                  <Quote className="w-5 h-5 text-accent-mid mb-4 opacity-80" />
+                  <p className="text-sm text-ink/80 leading-relaxed italic mb-6">"{t.text}"</p>
                 </div>
-                <div>
+                <div className="pt-4 border-t border-border/60">
                   <StarRating rating={t.rating} />
-                  <p className="text-xs font-semibold text-[#1A1612] mt-3">{t.name}</p>
-                  <p className="text-[11px] text-[#8C7E72]">{t.location}</p>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <p className="text-xs font-bold text-ink">{t.name}</p>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-accent-mid" />
+                  </div>
+                  <p className="text-[11px] text-muted">{t.location}</p>
                 </div>
               </div>
             ))}
@@ -359,31 +458,38 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* ──────── NEWSLETTER ──────── */}
-      <section className="bg-[#FAF7F2] py-20 border-t border-[#EDE6DC]">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1612] mb-3">
-            Join the KOSHA Circle
+      {/* ═══════════════════════════════════════════════════════════════
+          9. VIP DROP ALERTS (NEWSLETTER)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="bg-paper py-16 sm:py-20">
+        <div className="max-w-xl mx-auto px-4 text-center">
+          <span className="badge-new text-[9px] mb-3 inline-block">Private Access</span>
+          <h2 className="font-display text-4xl sm:text-5xl text-ink uppercase tracking-tight leading-none mb-3">
+            Join the Inner Circle
           </h2>
-          <p className="text-sm text-[#554C42] mb-8 leading-relaxed max-w-md mx-auto">
-            Receive private exhibition invitations, early access to limited capsule editions, and stories from our workshop.
+          <p className="text-xs sm:text-sm text-ink/70 mb-8 leading-relaxed">
+            Get confidential drop coordinates, private vault access, and archival previews straight to your inbox.
           </p>
-          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-2.5 max-w-md mx-auto">
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
+          >
             <input
               type="email"
-              placeholder="Your email address"
-              className="flex-1 px-4 py-3.5 bg-white border border-[#D5C9BD] text-[#1A1612] placeholder-[#9E9184] text-sm focus:outline-none focus:border-[#1A1612] transition-colors"
+              placeholder="enter your email address"
+              className="input text-xs py-3.5"
             />
             <button
               type="submit"
-              className="px-7 py-3.5 bg-[#1A1612] text-white text-xs font-semibold tracking-[0.16em] uppercase hover:bg-[#2F2620] transition-colors"
+              className="btn-primary py-3.5 px-6 whitespace-nowrap text-xs font-black"
             >
-              Subscribe
+              SUBSCRIBE
             </button>
           </form>
-          <p className="text-[10px] text-[#9E9184] mt-3">We respect your privacy. Unsubscribe at any time.</p>
+          <p className="text-[10px] text-muted mt-3">Zero spam. Pure signal. Unsubscribe whenever.</p>
         </div>
       </section>
+
     </div>
   );
 };

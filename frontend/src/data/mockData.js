@@ -1,6 +1,5 @@
 // ============================================================
-// KOSHA LEATHER — MOCK PRODUCT & CATEGORY DATA
-// Used for frontend UI until Phase 4 backend APIs are active
+// AVYASTORE.IN LEATHER — PRODUCT & CATEGORY DATA
 // ============================================================
 
 export const CATEGORIES = [

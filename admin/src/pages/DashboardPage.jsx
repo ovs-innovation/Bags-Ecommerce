@@ -65,7 +65,7 @@ export const DashboardPage = () => {
               </h2>
             </div>
             <p className="text-xs text-stone-500 mt-0.5">
-              Demonstrates independent Admin app (port 5174) communicating with the shared Node.js/Express API (port 5000).
+              Demonstrates independent Admin app (port 5174) communicating with the shared Node.js/Express API (port 5001).
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export const DashboardPage = () => {
             <div>
               <span className="text-[11px] uppercase tracking-wider font-semibold text-stone-600">Central API</span>
               <h4 className="text-sm font-semibold text-stone-900">
-                {loadingHealth ? 'Connecting...' : healthData ? 'Healthy (Port 5000)' : 'Unreachable'}
+                {loadingHealth ? 'Connecting...' : healthData ? 'Healthy (Port 5001)' : 'Unreachable'}
               </h4>
               <p className="text-xs text-stone-500 mt-0.5">
                 {healthData ? `Uptime: ${healthData.uptimeSeconds}s` : healthError || 'Connecting...'}
@@ -113,7 +113,7 @@ export const DashboardPage = () => {
                 {loadingHealth ? 'Checking...' : healthData?.database === 'connected' ? 'MongoDB Connected' : 'Disconnected'}
               </h4>
               <p className="text-xs text-stone-500 mt-0.5">
-                {healthData?.database === 'connected' ? 'kosha_ecommerce active' : 'Waiting for connection'}
+                {healthData?.database === 'connected' ? 'avyastore_ecommerce active' : 'Waiting for connection'}
               </p>
             </div>
           </div>

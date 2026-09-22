@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useCart } from './CartContext';
 import { useAuth } from './AuthContext';
-import { PRODUCTS } from '../data/mockData';
 import authService from '../services/authService';
 
 const SAVED_ITEMS_KEY = 'kosha_saved_items';
@@ -9,26 +8,13 @@ const SAVED_ITEMS_KEY = 'kosha_saved_items';
 const SavedItemsContext = createContext(null);
 
 /**
- * Ensures any item (whether full object or ID string) resolves to full product details
+ * Ensures any item resolves to full product details
  */
 const resolveProduct = (item) => {
   if (!item) return null;
-  const id = typeof item === 'string' ? item : (item.id || item.slug);
-  const catalogProduct = PRODUCTS.find(
-    (p) => String(p.id) === String(id) || p.slug === String(id)
-  );
-
-  if (catalogProduct) {
-    return {
-      ...catalogProduct,
-      savedAt: item.savedAt || new Date().toISOString(),
-    };
-  }
-
   if (typeof item === 'object' && item.name) {
     return item;
   }
-
   return null;
 };
 

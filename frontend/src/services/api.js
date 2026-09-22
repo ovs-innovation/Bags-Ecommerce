@@ -5,7 +5,7 @@ import axios from 'axios';
  * Configured with environment base URL and standard headers.
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
@@ -48,6 +48,17 @@ api.interceptors.response.use(
 export const healthCheckService = {
   checkHealth: async () => {
     const response = await api.get('/health');
+    return response.data;
+  },
+};
+
+export const productService = {
+  getProducts: async (params = {}) => {
+    const response = await api.get('/products', { params });
+    return response.data;
+  },
+  getProductBySlug: async (identifier) => {
+    const response = await api.get(`/products/${identifier}`);
     return response.data;
   },
 };

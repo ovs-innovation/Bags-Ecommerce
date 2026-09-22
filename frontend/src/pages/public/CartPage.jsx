@@ -1,13 +1,17 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Minus, Plus, X, ShoppingBag, ArrowRight, Truck, RotateCcw, Heart } from 'lucide-react';
+import { Minus, Plus, X, ShoppingBag, ArrowRight, Truck, RotateCcw, Heart, ShieldCheck } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useSavedItems } from '../../context/SavedItemsContext';
+import { useAuth } from '../../context/AuthContext';
+import { useAuthPrompt } from '../../context/AuthPromptContext';
 import { BRAND_CONFIG } from '../../constants/config';
 
 export const CartPage = () => {
   const { cart, removeFromCart, updateQty, cartTotal } = useCart();
   const { addToSaved } = useSavedItems();
+  const { isAuthenticated } = useAuth();
+  const { interceptAction, triggerAuthPrompt } = useAuthPrompt();
   const navigate = useNavigate();
 
   const shipping = cartTotal >= BRAND_CONFIG.policy.freeShippingThreshold ? 0 : 149;
@@ -15,62 +19,72 @@ export const CartPage = () => {
 
   if (cart.items.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16">
-        <div className="w-20 h-20 rounded-full bg-brand-100 flex items-center justify-center mb-6">
-          <ShoppingBag className="w-8 h-8 text-brand-700" />
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16 bg-fog">
+        <div className="w-20 h-20 rounded-xs bg-paper border border-border flex items-center justify-center mb-6 shadow-subtle">
+          <ShoppingBag className="w-8 h-8 text-ink" />
         </div>
-        <h1 className="font-serif text-3xl font-bold text-[#1A1715] mb-3">Your Bag is Empty</h1>
-        <p className="text-sm text-stone-500 mb-8 max-w-sm">
-          You haven't added anything to your bag yet. Discover our heirloom leather collections.
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-ink mb-3 uppercase">Your Bag is Empty</h1>
+        <p className="text-xs sm:text-sm text-muted mb-8 max-w-sm">
+          You haven't added any handcrafted pieces to your bag yet. Discover our latest curated drops.
         </p>
-        <Link to="/products" className="btn-primary px-8 py-4">
-          Explore Collections <ArrowRight className="w-4 h-4" />
+        <Link to="/products" className="btn-primary px-8 py-4 text-xs font-black tracking-widest">
+          <span>EXPLORE CREATIONS</span> <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] py-10">
+    <div className="min-h-screen bg-fog py-8 sm:py-12 text-ink">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1715] mb-2">
-          Your Shopping Bag
-        </h1>
-        <p className="text-sm text-stone-500 mb-10">
-          {cart.items.length} item{cart.items.length !== 1 ? 's' : ''}
-        </p>
+        
+        {/* Header */}
+        <div className="mb-6 sm:mb-8 border-b border-border pb-4">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold text-ink uppercase tracking-tight">
+            Shopping Bag
+          </h1>
+          <p className="text-xs uppercase font-bold tracking-widest text-muted mt-1">
+            {cart.items.length} item{cart.items.length !== 1 ? 's' : ''} reserved in atelier
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Grid: Items & Summary */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10 items-start">
+          
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-3 sm:space-y-4">
             {cart.items.map((item) => (
-              <div key={item.id} className="flex gap-4 bg-white p-4 shadow-subtle">
+              <div
+                key={item.id}
+                className="flex gap-3.5 sm:gap-4 bg-paper border border-border p-3.5 sm:p-5 rounded-xs shadow-subtle"
+              >
                 {/* Image */}
                 <Link to={`/products/${item.slug}`} className="flex-shrink-0">
                   <img
                     src={item.images[0]}
                     alt={item.name}
-                    className="w-24 h-28 sm:w-28 sm:h-32 object-cover"
+                    className="w-20 h-24 sm:w-24 sm:h-28 md:w-28 md:h-32 object-cover rounded-xs border border-border"
                   />
                 </Link>
 
                 {/* Details */}
-                <div className="flex-1 min-w-0 py-1">
+                <div className="flex-1 min-w-0 py-0.5">
                   <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-widest text-brand-600 font-bold">
+                    <div className="min-w-0">
+                      <p className="text-[10px] uppercase tracking-widest text-accent-mid font-extrabold truncate">
                         {item.gender} · {item.category}
                       </p>
                       <Link to={`/products/${item.slug}`}>
-                        <h3 className="font-serif text-base font-bold text-[#1A1715] hover:text-brand-800 transition-colors mt-0.5">
+                        <h3 className="font-sans text-sm sm:text-base font-extrabold text-ink hover:text-accent-mid transition-colors mt-0.5 line-clamp-1">
                           {item.name}
                         </h3>
                       </Link>
-                      <p className="text-xs text-stone-500 mt-0.5">{item.color}</p>
+                      <p className="text-xs text-muted mt-0.5 capitalize">{item.color}</p>
                     </div>
+
                     <button
                       onClick={() => removeFromCart(item.id)}
-                      className="p-1 text-stone-400 hover:text-cognac-600 transition-colors flex-shrink-0"
+                      className="p-1 text-muted hover:text-ink transition-colors flex-shrink-0"
                       aria-label="Remove"
                     >
                       <X className="w-4 h-4" />
@@ -78,39 +92,46 @@ export const CartPage = () => {
                   </div>
 
                   <div className="flex items-center justify-between mt-4">
-                    {/* Qty controls */}
-                    <div className="flex items-center border border-brand-200 bg-[#FAF8F5]">
+                    {/* Quantity controls */}
+                    <div className="flex items-center border border-border bg-fog rounded-xs">
                       <button
                         onClick={() => updateQty(item.id, item.qty - 1)}
-                        className="px-2.5 py-1.5 text-stone-700 hover:bg-brand-100 transition-colors"
+                        className="px-2.5 py-1.5 text-ink hover:bg-paper transition-colors"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="w-8 text-center text-sm font-bold text-[#1A1715]">
+                      <span className="w-8 text-center text-xs font-black text-ink">
                         {item.qty}
                       </span>
                       <button
                         onClick={() => updateQty(item.id, item.qty + 1)}
-                        className="px-2.5 py-1.5 text-stone-700 hover:bg-brand-100 transition-colors"
+                        className="px-2.5 py-1.5 text-ink hover:bg-paper transition-colors"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
-                    {/* Price & Save for later */}
+                    {/* Price & Save */}
                     <div className="text-right">
-                      <p className="font-bold text-[#1A1612]">
+                      <p className="font-black text-sm sm:text-base text-ink">
                         {BRAND_CONFIG.currency}{(item.price * item.qty).toLocaleString('en-IN')}
                       </p>
                       <button
                         onClick={() => {
-                          addToSaved(item);
-                          removeFromCart(item.id);
+                          interceptAction({
+                            action: 'WISHLIST',
+                            product: item,
+                            onAuthenticated: () => {
+                              addToSaved(item);
+                              removeFromCart(item.id);
+                            },
+                          });
                         }}
-                        className="inline-flex items-center gap-1 text-[11px] text-[#7F5E38] hover:text-[#1A1612] transition-colors mt-1 font-medium"
+                        className="inline-flex items-center gap-1 text-[11px] text-muted hover:text-ink transition-colors mt-1 font-bold uppercase tracking-wider"
                       >
-                        <Heart className="w-3 h-3" />
-                        <span>Save for later</span>
+                        <Heart className="w-3 h-3 text-red-500" />
+                        <span className="hidden sm:inline">Save for later</span>
+                        <span className="sm:hidden">Save</span>
                       </button>
                     </div>
                   </div>
@@ -120,57 +141,84 @@ export const CartPage = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="space-y-4">
-            <div className="bg-white p-6 shadow-subtle">
-              <h2 className="font-serif text-xl font-bold text-[#1A1715] mb-5">Order Summary</h2>
+          <div className="space-y-4 sticky top-24">
+            <div className="bg-paper border border-border p-6 rounded-xs shadow-subtle">
+              <h2 className="font-display text-2xl font-bold text-ink uppercase tracking-wide mb-5">
+                Order Summary
+              </h2>
 
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-stone-600">Subtotal</span>
-                  <span className="font-semibold">{BRAND_CONFIG.currency}{cartTotal.toLocaleString('en-IN')}</span>
+              <div className="space-y-3 text-xs sm:text-sm">
+                <div className="flex justify-between text-ink/75">
+                  <span>Subtotal</span>
+                  <span className="font-bold text-ink">{BRAND_CONFIG.currency}{cartTotal.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-stone-600">Shipping</span>
-                  <span className={shipping === 0 ? 'text-emerald-600 font-semibold' : 'font-semibold'}>
+                <div className="flex justify-between text-ink/75">
+                  <span>Shipping</span>
+                  <span className={shipping === 0 ? 'text-accent-mid font-extrabold' : 'font-bold text-ink'}>
                     {shipping === 0 ? 'FREE' : `${BRAND_CONFIG.currency}${shipping}`}
                   </span>
                 </div>
+
                 {shipping > 0 && (
-                  <p className="text-[11px] text-brand-700 bg-brand-50 px-3 py-2 border border-brand-200">
+                  <p className="text-[11px] text-ink bg-accent/20 px-3 py-2 border border-accent/40 rounded-xs font-semibold">
                     Add {BRAND_CONFIG.currency}{(BRAND_CONFIG.policy.freeShippingThreshold - cartTotal).toLocaleString('en-IN')} more for FREE shipping!
                   </p>
                 )}
-                <div className="border-t border-brand-100 pt-3 flex justify-between">
-                  <span className="font-bold text-[#1A1715]">Total</span>
-                  <span className="font-bold text-lg text-[#1A1715]">{BRAND_CONFIG.currency}{grandTotal.toLocaleString('en-IN')}</span>
+
+                <div className="border-t border-border pt-3.5 flex justify-between items-baseline">
+                  <span className="font-black text-sm uppercase text-ink">Total</span>
+                  <span className="font-black text-xl text-ink">
+                    {BRAND_CONFIG.currency}{grandTotal.toLocaleString('en-IN')}
+                  </span>
                 </div>
               </div>
 
               <button
-                onClick={() => navigate('/checkout')}
-                className="btn-primary w-full mt-6 py-4 text-base"
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    triggerAuthPrompt({
+                      action: 'BUY_NOW',
+                      product: cart.items[0],
+                      returnUrl: '/checkout',
+                    });
+                    return;
+                  }
+                  navigate('/checkout');
+                }}
+                className="btn-primary w-full mt-6 py-4 text-xs font-black tracking-widest shadow-sm hover:shadow-glow"
               >
-                Proceed to Checkout <ArrowRight className="w-4 h-4" />
+                <span>PROCEED TO CHECKOUT</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
 
-              <Link to="/products" className="block text-center text-xs text-stone-500 hover:text-brand-800 mt-4 transition-colors">
+              <Link
+                to="/products"
+                className="block text-center text-xs font-bold uppercase tracking-wider text-muted hover:text-ink mt-4 transition-colors"
+              >
                 ← Continue Shopping
               </Link>
             </div>
 
             {/* Assurances */}
-            <div className="bg-white p-5 shadow-subtle space-y-3">
-              <div className="flex items-center gap-3 text-xs text-stone-700">
-                <Truck className="w-4 h-4 text-brand-700 flex-shrink-0" />
-                <span>Delivered within <strong>4–7 business days</strong> across India</span>
+            <div className="bg-paper border border-border p-5 rounded-xs shadow-subtle space-y-3 text-xs">
+              <div className="flex items-center gap-3 text-ink/80">
+                <Truck className="w-4 h-4 text-accent-mid flex-shrink-0" />
+                <span>Pan-India delivery in <strong>4–7 business days</strong></span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-stone-700">
-                <RotateCcw className="w-4 h-4 text-brand-700 flex-shrink-0" />
-                <span>14-day hassle-free returns on all orders</span>
+              <div className="flex items-center gap-3 text-ink/80">
+                <RotateCcw className="w-4 h-4 text-accent-mid flex-shrink-0" />
+                <span><strong>14-day</strong> hassle-free returns on all pieces</span>
+              </div>
+              <div className="flex items-center gap-3 text-ink/80">
+                <ShieldCheck className="w-4 h-4 text-accent-mid flex-shrink-0" />
+                <span><strong>1-Year</strong> craftsmanship warranty</span>
               </div>
             </div>
+
           </div>
+
         </div>
+
       </div>
     </div>
   );

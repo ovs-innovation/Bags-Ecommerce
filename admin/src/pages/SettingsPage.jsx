@@ -31,7 +31,7 @@ export const SettingsPage = () => {
           </div>
           <div className="p-3 bg-stone-50 rounded border border-stone-200">
             <span className="text-stone-500 block font-medium">Central API Endpoint</span>
-            <span className="text-stone-900 font-mono text-xs mt-0.5 block">{import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}</span>
+            <span className="text-stone-900 font-mono text-xs mt-0.5 block">{import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}</span>
           </div>
           <div className="p-3 bg-stone-50 rounded border border-stone-200">
             <span className="text-stone-500 block font-medium">Customer Storefront Link</span>

@@ -1,386 +1,310 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
-  ShoppingBag, User, Search, Menu, X, ArrowRight,
-  ChevronDown, LogOut, ShieldCheck, Settings, Sparkles, Heart
+  ShoppingBag, User, Search, Menu, X, Heart,
+  ChevronDown, LogOut, Settings, Sparkles, Zap, ArrowRight
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../../constants/config';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useSavedItems } from '../../context/SavedItemsContext';
+import BrandLogo from '../common/BrandLogo';
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const { cartCount } = useCart();
-  const { savedCount } = useSavedItems();
-  const { user, isAuthenticated, logout } = useAuth();
-  const dropdownRef = useRef(null);
+  const [mobileOpen,      setMobileOpen]      = useState(false);
+  const [searchOpen,      setSearchOpen]       = useState(false);
+  const [userDropOpen,    setUserDropOpen]     = useState(false);
+  const [searchQuery,     setSearchQuery]      = useState('');
+  const [scrolled,        setScrolled]         = useState(false);
 
-  // Close dropdown on click outside
+  const { cartCount }                          = useCart();
+  const { savedCount }                         = useSavedItems();
+  const { user, isAuthenticated, logout }      = useAuth();
+  const dropdownRef                            = useRef(null);
+
+  /* scroll detection */
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setUserDropdownOpen(false);
-      }
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  /* close dropdown on outside click */
+  useEffect(() => {
+    const fn = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+        setUserDropOpen(false);
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
   }, []);
 
   const handleLogout = async () => {
-    setUserDropdownOpen(false);
+    setUserDropOpen(false);
     setMobileOpen(false);
     await logout();
     navigate('/');
   };
 
-  const linkClass = ({ isActive }) =>
-    `text-[13px] tracking-wide transition-colors duration-200 py-1 focus:outline-none ${
-      isActive
-        ? 'text-[#1A1612] font-semibold'
-        : 'text-[#4A4238] hover:text-[#1A1612]'
-    }`;
+  const firstName = user?.name ? user.name.split(' ')[0] : 'You';
 
-  const firstName = user?.name ? user.name.split(' ')[0] : 'Patron';
+  const navLinks = BRAND_CONFIG.navLinks;
 
   return (
     <>
-      {/* Top announcement bar */}
-      <div className="bg-[#15120F] text-[#E5D6C2] border-b border-[#2A231C] text-[10.5px] sm:text-[11px] py-2.5 px-4 text-center tracking-[0.18em] uppercase font-medium">
-        <span className="text-[#E6C687] font-semibold">Handcrafted in India</span>
-        <span className="mx-2.5 text-[#6D5D4E]">•</span>
-        <span className="text-[#FAF7F2]">Free Shipping Over ₹{BRAND_CONFIG.policy.freeShippingThreshold.toLocaleString('en-IN')}</span>
-        <span className="mx-2.5 text-[#6D5D4E]">•</span>
-        <span className="text-[#D8C7B5]">{BRAND_CONFIG.policy.returnDays}-Day Atelier Returns</span>
+      {/* ─── Top Announcement Marquee ─── */}
+      <div className="bg-ink text-[11px] py-2 overflow-hidden select-none border-b border-white/5">
+        <div className="animate-marquee whitespace-nowrap flex items-center gap-10 font-sans font-semibold tracking-[0.14em] uppercase text-fog/80">
+          {[...Array(2)].map((_, idx) => (
+            <span key={idx} className="flex items-center gap-10">
+              <span className="flex items-center gap-2">
+                <span className="text-accent">✦</span>
+                <span>Trends Today · Trends Tomorrow · <span className="text-accent">Old Is Gold</span></span>
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-accent">✦</span>
+                <span>Free shipping over ₹{BRAND_CONFIG.policy.freeShippingThreshold.toLocaleString('en-IN')}</span>
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-accent">✦</span>
+                <span>100% Full-Grain Leather · Handcrafted in India</span>
+              </span>
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Main luxury navbar */}
-      <header className="sticky top-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#EDE6DC]/40">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="grid grid-cols-3 items-center h-[72px]">
+      {/* ─── Main Navbar ─── */}
+      <header
+        className="sticky top-0 z-50 bg-white border-b border-border/80 shadow-xs transition-shadow duration-200"
+        style={{ position: 'sticky', top: 0, zIndex: 50 }}
+      >
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-[84px] sm:h-[92px] gap-4">
 
-            {/* Left: Desktop nav links */}
-            <div className="flex items-center">
+            {/* ── Left: Mobile hamburger + Desktop Nav ── */}
+            <div className="flex items-center gap-6">
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 -ml-2 text-[#1A1612]"
+                className="lg:hidden p-2 -ml-2 text-ink hover:text-accent-dark transition-colors"
                 aria-label="Menu"
               >
                 {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
-              <nav className="hidden lg:flex items-center space-x-8 text-[13px]">
-                {BRAND_CONFIG.navLinks.map((link) => (
+              <nav className="hidden lg:flex items-center gap-7">
+                {navLinks.map((link) => (
                   <NavLink
                     key={link.path}
                     to={link.path}
                     end={link.path === '/'}
-                    className={linkClass}
+                    className={({ isActive }) =>
+                      `text-[12.5px] font-semibold uppercase tracking-[0.1em] transition-colors duration-200 py-1 relative group ${
+                        isActive ? 'text-ink' : 'text-ink/55 hover:text-ink'
+                      }`
+                    }
                   >
-                    {link.label}
+                    {({ isActive }) => (
+                      <>
+                        {link.label}
+                        <span
+                          className="absolute -bottom-0.5 left-0 h-[1.5px] bg-accent-dark transition-all duration-300"
+                          style={{ width: isActive ? '100%' : '0%' }}
+                        />
+                        <span className="absolute -bottom-0.5 left-0 h-[1.5px] bg-ink/20 w-0 group-hover:w-full transition-all duration-300" />
+                      </>
+                    )}
                   </NavLink>
                 ))}
               </nav>
             </div>
 
-            {/* Center: Brand Logo */}
-            <div className="flex justify-center items-center">
-              <Link to="/" className="inline-block group text-center">
-                <span className="font-serif text-[24px] sm:text-[28px] tracking-[0.28em] text-[#1A1612] font-bold uppercase select-none transition-opacity group-hover:opacity-85">
-                  {BRAND_CONFIG.name}
-                </span>
-              </Link>
+            {/* ── Center: Logo ── */}
+            <div className="absolute left-1/2 -translate-x-1/2">
+              <BrandLogo variant="nav" />
             </div>
 
-            {/* Right: Actions with Search, Authenticated Account, and Bag */}
-            <div className="flex items-center justify-end gap-4 sm:gap-6 text-[13px] text-[#2C241E]">
-              {/* Search Toggle */}
+            {/* ── Right: Actions ── */}
+            <div className="flex items-center gap-3 sm:gap-5">
+
+              {/* Search */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="inline-flex items-center gap-1.5 hover:text-black transition-colors"
+                className="p-1.5 text-ink/60 hover:text-ink transition-colors"
                 aria-label="Search"
               >
-                <Search className="w-4 h-4 stroke-[1.5]" />
-                <span className="hidden sm:inline font-normal">Search</span>
+                <Search className="w-[18px] h-[18px] stroke-[1.8]" />
               </button>
 
-              {/* Saved Items */}
-              <Link
-                to="/saved"
-                className="inline-flex items-center gap-1.5 hover:text-black transition-colors relative group"
-                aria-label="Saved Items"
-                title="Saved Items"
-              >
-                <div className="relative flex items-center justify-center">
-                  <Heart className="w-4 h-4 stroke-[1.5] group-hover:scale-110 transition-transform" />
-                  {savedCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-[#1A1612] text-[#E6C687] text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-sm">
-                      {savedCount}
-                    </span>
-                  )}
-                </div>
-                <span className="hidden sm:inline font-normal">Saved</span>
+              {/* Saved */}
+              <Link to="/saved" className="relative p-1.5 text-ink/60 hover:text-ink transition-colors" aria-label="Saved">
+                <Heart className="w-[18px] h-[18px] stroke-[1.8]" />
+                {savedCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-accent text-ink text-[9px] font-black flex items-center justify-center rounded-full">
+                    {savedCount}
+                  </span>
+                )}
               </Link>
 
-              {/* Account / User Menu */}
+              {/* Auth */}
               {isAuthenticated ? (
                 <div className="relative" ref={dropdownRef}>
                   <button
-                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="inline-flex items-center gap-2 hover:text-black transition-colors py-1 focus:outline-none"
-                    aria-expanded={userDropdownOpen}
+                    onClick={() => setUserDropOpen(!userDropOpen)}
+                    className="flex items-center gap-1.5 text-ink/60 hover:text-ink transition-colors p-1.5"
                   >
-                    <div className="w-6 h-6 rounded-full bg-[#1A1612] text-[#E6C687] text-[10px] font-semibold flex items-center justify-center">
-                      {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    <div className="w-6 h-6 bg-ink text-accent text-[10px] font-black flex items-center justify-center rounded-full">
+                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                     </div>
-                    <span className="hidden sm:inline font-medium text-xs tracking-wider">
-                      {firstName}
-                    </span>
-                    <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${userDropOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {/* Luxury Dropdown Menu */}
-                  {userDropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-64 bg-white border border-[#EDE6DC] shadow-elevated rounded-sm py-2 z-50 animate-fadeIn">
-                      {/* User Header */}
-                      <div className="px-4 py-3 border-b border-[#EDE6DC]/60 bg-[#FAF7F2]/60">
-                        <p className="text-xs font-semibold text-[#1A1612] truncate">
-                          {user?.name}
-                        </p>
-                        <p className="text-[11px] text-stone-500 truncate mt-0.5">
-                          {user?.email}
-                        </p>
-                        <span className="inline-flex items-center gap-1 mt-1 text-[9px] uppercase tracking-widest text-[#7F5E38] font-semibold">
-                          <Sparkles className="w-2.5 h-2.5 text-[#B89B74]" />
-                          {user?.role === 'admin' ? 'Atelier Admin' : 'Artisan Member'}
-                        </span>
+                  {userDropOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-paper border border-border shadow-elevated z-50 animate-fade-in"
+                      style={{ borderRadius: '2px' }}>
+                      <div className="px-4 py-3 border-b border-border">
+                        <p className="text-xs font-bold text-ink truncate">{user?.name}</p>
+                        <p className="text-[11px] text-muted truncate mt-0.5">{user?.email}</p>
                       </div>
-
-                      {/* Dropdown Links */}
                       <div className="py-1 text-xs">
-                        <Link
-                          to="/profile"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2 text-[#3D352E] hover:bg-[#FAF7F2] hover:text-[#1A1612] transition-colors"
-                        >
-                          <Settings className="w-4 h-4 text-stone-400" />
-                          <span>Account & Security</span>
+                        <Link to="/profile" onClick={() => setUserDropOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-ink/70 hover:text-ink hover:bg-fog transition-colors">
+                          <Settings className="w-3.5 h-3.5" /> Account
                         </Link>
-                        <Link
-                          to="/saved"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center justify-between px-4 py-2 text-[#3D352E] hover:bg-[#FAF7F2] hover:text-[#1A1612] transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <Heart className="w-4 h-4 text-stone-400" />
-                            <span>Saved Creations</span>
-                          </div>
-                          {savedCount > 0 && (
-                            <span className="text-[10px] bg-[#FAF7F2] text-[#7F5E38] font-bold px-1.5 py-0.5 rounded border border-[#EDE6DC]">
-                              {savedCount}
-                            </span>
-                          )}
+                        <Link to="/saved" onClick={() => setUserDropOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-ink/70 hover:text-ink hover:bg-fog transition-colors">
+                          <Heart className="w-3.5 h-3.5" /> Saved ({savedCount})
                         </Link>
-                        <Link
-                          to="/cart"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center justify-between px-4 py-2 text-[#3D352E] hover:bg-[#FAF7F2] hover:text-[#1A1612] transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <ShoppingBag className="w-4 h-4 text-stone-400" />
-                            <span>My Shopping Bag</span>
-                          </div>
-                          <span className="text-[10px] bg-[#FAF7F2] text-[#7F5E38] font-bold px-1.5 py-0.5 rounded border border-[#EDE6DC]">
-                            {cartCount}
-                          </span>
+                        <Link to="/cart" onClick={() => setUserDropOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-ink/70 hover:text-ink hover:bg-fog transition-colors">
+                          <ShoppingBag className="w-3.5 h-3.5" /> Bag ({cartCount})
                         </Link>
                       </div>
-
-                      {/* Sign Out Action */}
-                      <div className="border-t border-[#EDE6DC]/60 pt-1">
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-red-700 hover:bg-red-50 transition-colors text-left"
-                        >
-                          <LogOut className="w-4 h-4 text-red-500" />
-                          <span>Sign Out</span>
+                      <div className="border-t border-border">
+                        <button onClick={handleLogout}
+                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-red-600 hover:bg-red-50 transition-colors text-left">
+                          <LogOut className="w-3.5 h-3.5" /> Sign Out
                         </button>
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <Link
-                  to="/login"
-                  className="inline-flex items-center gap-1.5 hover:text-black transition-colors"
-                  aria-label="Sign In"
-                >
-                  <User className="w-4 h-4 stroke-[1.5]" />
-                  <span className="hidden sm:inline font-normal">Sign In</span>
+                <Link to="/login" className="hidden sm:flex items-center gap-1.5 text-[12px] font-semibold text-ink/60 hover:text-ink transition-colors uppercase tracking-wide p-1.5">
+                  <User className="w-[18px] h-[18px] stroke-[1.8]" />
+                  <span className="hidden sm:inline">Sign In</span>
                 </Link>
               )}
 
-              {/* Bag Counter */}
+              {/* Cart */}
               <Link
                 to="/cart"
-                className="inline-flex items-center gap-1.5 hover:text-black transition-colors group"
-                aria-label="Bag"
+                className="flex items-center gap-1.5 bg-ink text-accent px-3 py-2 hover:bg-[#1a1a1a] transition-colors group"
+                style={{ borderRadius: '2px' }}
               >
-                <ShoppingBag className="w-4 h-4 stroke-[1.5] group-hover:scale-105 transition-transform" />
-                <span className="font-normal">Bag ({cartCount})</span>
+                <ShoppingBag className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+                <span className="text-[12px] font-black uppercase tracking-wider">{cartCount}</span>
               </Link>
             </div>
 
           </div>
         </div>
 
-        {/* Search bar slide-out */}
+        {/* ─── Search Dropdown ─── */}
         {searchOpen && (
-          <div className="border-t border-[#EDE6DC] bg-[#FAF7F2] py-4 px-6 sm:px-10 shadow-md">
-            <div className="max-w-3xl mx-auto">
-              <div className="relative flex items-center bg-white border border-[#EDE6DC] focus-within:border-[#1A1612] focus-within:ring-1 focus-within:ring-[#1A1612] rounded-sm shadow-subtle transition-all">
-                <div className="pl-4 pr-2 text-[#7F5E38] pointer-events-none">
-                  <Search className="w-4 h-4" />
-                </div>
+          <div className="border-t border-border bg-paper animate-fade-in">
+            <div className="max-w-3xl mx-auto px-4 sm:px-8 py-4">
+              <div className="flex items-center gap-3 bg-fog border border-border focus-within:border-ink transition-colors"
+                style={{ borderRadius: '2px' }}>
+                <Search className="w-4 h-4 text-muted ml-4 flex-shrink-0" />
                 <input
                   autoFocus
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by bag name, leather type, color, or category..."
-                  className="flex-1 py-3 pr-24 text-xs sm:text-sm text-[#1A1612] placeholder-stone-400 bg-transparent focus:outline-none"
+                  placeholder="Search bags, leather, colors…"
+                  className="flex-1 py-3 pr-4 text-sm text-ink placeholder-muted bg-transparent focus:outline-none"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && searchQuery.trim()) {
                       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
                       setSearchOpen(false);
+                      setSearchQuery('');
                     }
                     if (e.key === 'Escape') setSearchOpen(false);
                   }}
                 />
-                <div className="absolute right-3 flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      if (searchQuery.trim()) {
-                        navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-                        setSearchOpen(false);
-                      }
-                    }}
-                    className="px-3 py-1 bg-[#1A1612] text-white text-[11px] font-semibold uppercase tracking-wider rounded-xs hover:bg-[#2C241E] transition-colors"
-                  >
-                    Search
-                  </button>
-                  <button
-                    onClick={() => setSearchOpen(false)}
-                    className="w-6 h-6 rounded-full hover:bg-stone-100 text-stone-400 hover:text-black flex items-center justify-center transition-colors"
-                    title="Close search"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+                <button onClick={() => setSearchOpen(false)} className="p-3 text-muted hover:text-ink transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-
-              {/* Quick search tags */}
-              <div className="flex items-center gap-2 mt-2.5 text-[11px] text-[#7F5E38] overflow-x-auto">
-                <span className="text-stone-400 uppercase font-semibold text-[10px] tracking-wider flex-shrink-0">
-                  Popular:
-                </span>
-                {['Totes', 'Crossbody', 'Cognac', 'Vegetable-Tanned', 'Wallets'].map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => {
-                      navigate(`/products?search=${encodeURIComponent(item)}`);
-                      setSearchOpen(false);
-                    }}
-                    className="px-2.5 py-0.5 bg-white border border-[#EDE6DC] hover:border-black hover:text-black rounded-full transition-colors whitespace-nowrap"
-                  >
-                    {item}
+              <div className="flex items-center gap-2 mt-3 flex-wrap">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-muted">Trending:</span>
+                {['Tote', 'Crossbody', 'Wallet', 'Cognac'].map((t) => (
+                  <button key={t} onClick={() => {
+                    navigate(`/products?search=${encodeURIComponent(t)}`);
+                    setSearchOpen(false);
+                    setSearchQuery('');
+                  }}
+                    className="text-[11px] px-2.5 py-1 border border-border text-ink/60 hover:border-ink hover:text-ink transition-all"
+                    style={{ borderRadius: '99px' }}>
+                    {t}
                   </button>
                 ))}
               </div>
             </div>
           </div>
         )}
+      </header>
 
-        {/* Mobile menu */}
-        {mobileOpen && (
-          <div className="lg:hidden border-t border-[#EDE6DC] bg-[#FAF7F2] px-6 pt-4 pb-8 shadow-elevated space-y-3">
-            {BRAND_CONFIG.navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between py-2 text-base font-medium text-[#1A1612] hover:text-brand-800"
-              >
-                <span>{link.label}</span>
-                <ArrowRight className="w-4 h-4 text-[#8C7E72]" />
-              </Link>
-            ))}
+      {/* ─── Mobile Drawer ─── */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <div className="relative w-[80vw] max-w-xs bg-paper h-full overflow-y-auto shadow-elevated flex flex-col animate-slide-left">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <BrandLogo variant="nav" linkTo="/" />
+              <button onClick={() => setMobileOpen(false)} className="p-1 text-muted hover:text-ink">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            {/* Mobile Auth Status */}
-            <div className="pt-4 border-t border-[#EDE6DC] space-y-3 text-sm text-[#4A4238]">
+            <nav className="flex-1 px-5 py-6 space-y-1">
+              {navLinks.map((link) => (
+                <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-between py-3 border-b border-border/50 text-sm font-semibold text-ink/70 hover:text-ink uppercase tracking-wide transition-colors">
+                  <span>{link.label}</span>
+                  <ArrowRight className="w-4 h-4 text-muted" />
+                </Link>
+              ))}
+            </nav>
+
+            <div className="px-5 py-5 border-t border-border space-y-2.5">
               {isAuthenticated ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#EDE6DC]/60">
-                    <div>
-                      <p className="font-semibold text-[#1A1612] text-sm">{user?.name}</p>
-                      <p className="text-xs text-stone-500">{user?.email}</p>
-                    </div>
-                    <Link
-                      to="/profile"
-                      onClick={() => setMobileOpen(false)}
-                      className="px-3 py-1 bg-white border border-[#EDE6DC] text-xs font-semibold uppercase tracking-wider"
-                    >
-                      Profile
-                    </Link>
-                  </div>
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <Link to="/saved" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 hover:text-black">
-                      <Heart className="w-4 h-4" /> Saved ({savedCount})
-                    </Link>
-                    <Link to="/cart" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 hover:text-black">
-                      <ShoppingBag className="w-4 h-4" /> Bag ({cartCount})
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-1 text-red-600 font-semibold uppercase text-[11px]"
-                    >
-                      <LogOut className="w-3.5 h-3.5" /> Sign Out
-                    </button>
-                  </div>
-                </div>
+                <>
+                  <div className="text-xs text-muted mb-3">{user?.name} · {user?.email}</div>
+                  <Link to="/saved" onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-sm font-medium text-ink/70 hover:text-ink py-1.5">
+                    <Heart className="w-4 h-4" /> Saved ({savedCount})
+                  </Link>
+                  <Link to="/cart" onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-sm font-medium text-ink/70 hover:text-ink py-1.5">
+                    <ShoppingBag className="w-4 h-4" /> Bag ({cartCount})
+                  </Link>
+                  <button onClick={handleLogout} className="text-sm font-semibold text-red-600 flex items-center gap-2 py-1.5">
+                    <LogOut className="w-4 h-4" /> Sign Out
+                  </button>
+                </>
               ) : (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Link to="/login" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 font-medium">
-                      <User className="w-4 h-4" /> Sign In
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setMobileOpen(false)}
-                      className="px-3.5 py-1.5 bg-[#1A1612] text-white text-xs uppercase tracking-wider font-semibold"
-                    >
-                      Join Atelier
-                    </Link>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-[#EDE6DC]/60 text-xs">
-                    <Link to="/saved" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 hover:text-black">
-                      <Heart className="w-4 h-4" /> Saved ({savedCount})
-                    </Link>
-                    <Link to="/cart" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 hover:text-black">
-                      <ShoppingBag className="w-4 h-4" /> Bag ({cartCount})
-                    </Link>
-                  </div>
+                <div className="flex gap-2">
+                  <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1 btn-outline text-center py-3 text-xs">Sign In</Link>
+                  <Link to="/register" onClick={() => setMobileOpen(false)} className="flex-1 btn-primary text-center py-3 text-xs">Join</Link>
                 </div>
               )}
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
     </>
   );
 };

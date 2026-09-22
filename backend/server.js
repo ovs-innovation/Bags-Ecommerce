@@ -4,7 +4,7 @@ const app = require('./app');
 const connectDB = require('./config/db');
 const { BRAND_CONFIG } = require('./config/constants');
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 /**
  * Start the HTTP server after connecting to database

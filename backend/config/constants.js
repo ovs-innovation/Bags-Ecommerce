@@ -1,11 +1,11 @@
 /**
- * Centralized Application & Brand Constants for KOSHA Server
+ * Centralized Application & Brand Constants for Avyastore.in Server
  * All brand metadata, currency defaults, and system enumerations are configured here.
  */
 const BRAND_CONFIG = {
-  brandName: 'KOSHA',
+  brandName: 'Avyastore.in',
   tagline: 'Handcrafted Luxury Leather Purses & Accessories',
-  supportEmail: 'care@koshaleather.com',
+  supportEmail: 'care@avyastore.in',
   supportPhone: '+91 98765 43210',
   currency: 'INR',
   currencySymbol: '₹',

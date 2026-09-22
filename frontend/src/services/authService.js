@@ -1,7 +1,7 @@
 import api from './api';
 
 /**
- * Authentication service communicating with KOSHA Backend Auth API
+ * Authentication service communicating with Avyastore.in Backend Auth API
  */
 export const authService = {
   /**

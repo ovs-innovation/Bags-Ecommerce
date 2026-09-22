@@ -1,9 +1,9 @@
 /**
- * Central Configuration for KOSHA Admin Console
+ * Central Configuration for Avyastore.in Admin Console
  * Keep brand name and core metadata synchronized with backend constants.
  */
 export const ADMIN_CONFIG = {
-  brandName: 'KOSHA',
+  brandName: 'Avyastore.in',
   portalName: 'Admin Control Center',
   currency: '₹',
   currencyCode: 'INR',

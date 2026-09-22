@@ -8,10 +8,11 @@ export const StarRating = ({ rating = 5, size = 'sm' }) => {
       {[1, 2, 3, 4, 5].map((n) => (
         <Star
           key={n}
-          className={`${s} ${n <= Math.round(rating) ? 'text-gold-500 fill-gold-500' : 'text-stone-300'}`}
+          className={`${s} ${n <= Math.round(rating) ? 'text-amber-400 fill-amber-400' : 'text-border'}`}
         />
       ))}
     </div>
   );
 };
+
 export default StarRating;
