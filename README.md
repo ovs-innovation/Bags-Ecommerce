@@ -1,4 +1,4 @@
-# KOSHA — Luxury Leather Purses & Accessories E-Commerce Platform
+# avyastore — Luxury Leather Purses & Accessories E-Commerce Platform
 
 A production-style full-stack MERN e-commerce platform for selling premium handcrafted leather purses, handbags, wallets, and accessories for men and women in India.
 
