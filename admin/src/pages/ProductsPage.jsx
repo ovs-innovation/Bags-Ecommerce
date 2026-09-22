@@ -250,11 +250,10 @@ export const ProductsPage = () => {
       {/* Toast Notification */}
       {toast && (
         <div
-          className={`fixed top-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-md shadow-lg transition-all text-xs font-semibold ${
-            toast.type === 'error'
+          className={`fixed top-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-md shadow-lg transition-all text-xs font-semibold ${toast.type === 'error'
               ? 'bg-red-900 text-white border border-red-700'
               : 'bg-stone-900 text-white border border-stone-700'
-          }`}
+            }`}
         >
           {toast.type === 'error' ? (
             <AlertCircle className="w-4 h-4 text-red-400" />

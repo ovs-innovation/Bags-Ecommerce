@@ -81,52 +81,52 @@ export const Navbar = () => {
         style={{ position: 'sticky', top: 0, zIndex: 50 }}
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-[84px] sm:h-[92px] gap-4">
+          <div className="flex items-center justify-between h-[80px] sm:h-[88px] gap-4 sm:gap-6">
 
-            {/* ── Left: Mobile hamburger + Desktop Nav ── */}
-            <div className="flex items-center gap-6">
+            {/* ── Left: Mobile hamburger + Brand Logo ── */}
+            <div className="flex items-center gap-2.5 sm:gap-4 flex-shrink-0">
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 -ml-2 text-ink hover:text-accent-dark transition-colors"
-                aria-label="Menu"
+                className="lg:hidden p-2 -ml-2 text-ink hover:text-accent-mid transition-colors"
+                aria-label="Toggle navigation menu"
               >
                 {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
-              <nav className="hidden lg:flex items-center gap-7">
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    end={link.path === '/'}
-                    className={({ isActive }) =>
-                      `text-[12.5px] font-semibold uppercase tracking-[0.1em] transition-colors duration-200 py-1 relative group ${
-                        isActive ? 'text-ink' : 'text-ink/55 hover:text-ink'
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {link.label}
-                        <span
-                          className="absolute -bottom-0.5 left-0 h-[1.5px] bg-accent-dark transition-all duration-300"
-                          style={{ width: isActive ? '100%' : '0%' }}
-                        />
-                        <span className="absolute -bottom-0.5 left-0 h-[1.5px] bg-ink/20 w-0 group-hover:w-full transition-all duration-300" />
-                      </>
-                    )}
-                  </NavLink>
-                ))}
-              </nav>
+              <div className="flex items-center">
+                <BrandLogo variant="nav" linkTo="/" />
+              </div>
             </div>
 
-            {/* ── Center: Logo ── */}
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <BrandLogo variant="nav" />
-            </div>
+            {/* ── Center: Primary Navigation Links ── */}
+            <nav className="hidden lg:flex items-center gap-7 xl:gap-9">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  end={link.path === '/'}
+                  className={({ isActive }) =>
+                    `text-[12.5px] font-bold uppercase tracking-[0.12em] transition-colors duration-200 py-1 relative group ${
+                      isActive ? 'text-ink font-black' : 'text-ink/65 hover:text-ink'
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      {link.label}
+                      <span
+                        className="absolute -bottom-1 left-0 h-[2px] bg-ink transition-all duration-300"
+                        style={{ width: isActive ? '100%' : '0%' }}
+                      />
+                      <span className="absolute -bottom-1 left-0 h-[2px] bg-accent-mid w-0 group-hover:w-full transition-all duration-300" />
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
 
             {/* ── Right: Actions ── */}
-            <div className="flex items-center gap-3 sm:gap-5">
+            <div className="flex items-center gap-2.5 sm:gap-4 flex-shrink-0">
 
               {/* Search */}
               <button

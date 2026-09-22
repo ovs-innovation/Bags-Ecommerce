@@ -65,13 +65,13 @@ export const BrandLogo = ({
     );
   }
 
-  // Default Navbar Lockup — Large according to navbar, simple static display with NO hover effects
+  // Default Navbar Lockup — New user logo, large, clean left-side layout, simple static display
   const navContent = (
     <div className={`inline-flex items-center select-none ${className}`}>
       <img
-        src="/logo-navbar.png"
+        src="/logo-header.png"
         alt="Avya Store"
-        className="h-[72px] sm:h-[82px] w-auto max-w-[190px] sm:max-w-[240px] object-contain select-none mix-blend-multiply"
+        className="h-[54px] sm:h-[62px] md:h-[68px] w-auto max-w-[180px] sm:max-w-[220px] object-contain select-none mix-blend-multiply"
         loading="eager"
         onError={(e) => {
           e.currentTarget.src = '/logo.png';
