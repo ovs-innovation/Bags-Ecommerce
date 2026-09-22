@@ -80,14 +80,14 @@ export const Navbar = () => {
         className="sticky top-0 z-50 bg-white border-b border-border/80 shadow-xs transition-shadow duration-200"
         style={{ position: 'sticky', top: 0, zIndex: 50 }}
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-[80px] sm:h-[88px] gap-4 sm:gap-6">
+        <div className="max-w-[1440px] mx-auto px-3.5 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-[68px] sm:h-[78px] lg:h-[88px] gap-2.5 sm:gap-6">
 
             {/* ── Left: Mobile hamburger + Brand Logo ── */}
-            <div className="flex items-center gap-2.5 sm:gap-4 flex-shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-4 flex-shrink-0">
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 -ml-2 text-ink hover:text-accent-mid transition-colors"
+                className="lg:hidden p-2 -ml-1 text-ink hover:text-accent-mid transition-colors"
                 aria-label="Toggle navigation menu"
               >
                 {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -126,7 +126,7 @@ export const Navbar = () => {
             </nav>
 
             {/* ── Right: Actions ── */}
-            <div className="flex items-center gap-2.5 sm:gap-4 flex-shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-4 flex-shrink-0">
 
               {/* Search */}
               <button
